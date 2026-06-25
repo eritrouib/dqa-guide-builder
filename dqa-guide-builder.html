@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DQA User Guide Builder</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff;--bg-s:#f7f7f5;--bg-t:#f0efeb;--tx:#1a1a18;--tx2:#5f5e5a;--txh:#9c9b96;--bd:rgba(0,0,0,.12);--bds:rgba(0,0,0,.22);--abg:#E6F1FB;--atx:#0C447C;--sbg:#EAF3DE;--stx:#27500A;--r:10px;--rs:6px}
+@media(prefers-color-scheme:dark){:root{--bg:#1e1e1c;--bg-s:#2a2a28;--bg-t:#242422;--tx:#e8e7e2;--tx2:#a8a7a2;--txh:#6a6a66;--bd:rgba(255,255,255,.1);--bds:rgba(255,255,255,.2);--abg:#0C447C;--atx:#B5D4F4;--sbg:#27500A;--stx:#C0DD97}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg-t);color:var(--tx);min-height:100vh;padding:2rem 1rem 4rem;line-height:1.6}
+.wrap{max-width:680px;margin:0 auto}
+h1{font-size:22px;font-weight:600;margin-bottom:4px}
+.sub{font-size:15px;color:var(--tx2);margin-bottom:1.5rem}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--abg);color:var(--atx);margin-bottom:10px;letter-spacing:.03em}
+.safe{display:flex;align-items:center;gap:8px;background:var(--sbg);color:var(--stx);border-radius:var(--rs);padding:10px 14px;font-size:13px;font-weight:500;margin-bottom:1.5rem}
+.drop{border:1.5px dashed var(--bds);border-radius:var(--r);background:var(--bg);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:1rem}
+.drop:hover,.drop.over{border-color:#378ADD;background:var(--abg)}
+.drop input{display:none}
+.drop h3{font-size:15px;font-weight:500;margin-bottom:4px}
+.drop p{font-size:13px;color:var(--tx2)}
+.browse{color:#185FA5;text-decoration:underline;cursor:pointer}
+.fbar{display:none;align-items:center;gap:10px;background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:1rem}
+.fbar.on{display:flex}
+.fname{font-size:14px;font-weight:500;flex:1}
+.finfo{font-size:12px;color:var(--tx2)}
+.card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
+.ctitle{font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.atag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--sbg);color:var(--stx);letter-spacing:.03em}
+.sgrid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.stag{display:flex;align-items:center;gap:6px;background:var(--bg-s);border:.5px solid var(--bd);border-radius:20px;padding:5px 12px;font-size:13px}
+.stag input[type=checkbox]{accent-color:#185FA5;width:14px;height:14px;cursor:pointer}
+.stag label{cursor:pointer}
+.row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+input[type=text],textarea{width:100%;background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--rs);padding:9px 12px;font-size:14px;font-family:inherit;color:var(--tx);outline:none;transition:border-color .15s}
+input[type=text]:focus,textarea:focus{border-color:var(--bds)}
+input[type=text]::placeholder,textarea::placeholder{color:var(--txh)}
+textarea{resize:vertical;min-height:80px;line-height:1.5}
+.xbtn{background:none;border:none;cursor:pointer;color:var(--txh);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;transition:color .15s}
+.xbtn:hover{color:#E24B4A}
+.abtn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--tx2);background:none;border:.5px dashed var(--bds);border-radius:var(--rs);padding:7px 12px;cursor:pointer;margin-top:4px;transition:all .15s;font-family:inherit}
+.abtn:hover{background:var(--bg-s);color:var(--tx)}
+.gbtn{width:100%;padding:13px;background:var(--tx);color:var(--bg);border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;margin-top:.5rem}
+.gbtn:hover{opacity:.85}
+.gbtn:active{transform:scale(.99)}
+.out{display:none;margin-top:1.5rem}
+.out.on{display:block}
+.oh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ol{font-size:13px;font-weight:500;color:var(--tx2)}
+.cbtn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:6px 14px;background:var(--bg);color:var(--tx);border:.5px solid var(--bds);border-radius:var(--rs);cursor:pointer;font-family:inherit;transition:all .15s}
+.cbtn:hover{background:var(--bg-s)}
+.cbtn.done{background:var(--sbg);color:var(--stx);border-color:transparent}
+.pbox{background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;font-size:13.5px;line-height:1.7;color:var(--tx);white-space:pre-wrap;word-break:break-word;max-height:360px;overflow-y:auto}
+.hint-box{margin-top:1rem;background:var(--abg);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--atx);line-height:1.6}
+.hint-box strong{font-weight:600}
+.div{height:.5px;background:var(--bd);margin:1.5rem 0}
+.ic{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.em{font-size:13px;color:var(--txh);font-style:italic;padding:4px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">Data Quality Assurance</div>
+  <h1>DQA user guide builder</h1>
+  <p class="sub">Drop your Excel file — it is read locally and never leaves your computer. Then fill in your checks and sources, and get a prompt ready to paste into any AI.</p>
+
+  <div class="safe">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    100% local &mdash; your file is never uploaded or sent anywhere.
+  </div>
+
+  <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
+    <input type="file" id="fi" accept=".xlsx,.xls,.xlsm" />
+    <svg style="width:40px;height:40px;stroke:var(--txh);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 12px" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+    </svg>
+    <h3>Drop your Excel file here</h3>
+    <p>or <span class="browse">browse to select it</span> &nbsp;&middot;&nbsp; .xlsx / .xls / .xlsm</p>
+  </div>
+
+  <div class="fbar" id="fb">
+    <svg class="ic" style="width:20px;height:20px;color:var(--stx)" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <div style="flex:1"><div class="fname" id="fn"></div><div class="finfo" id="fi2"></div></div>
+    <button class="xbtn" onclick="clearFile()" aria-label="Remove">&times;</button>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Sheets to include <span class="atag" id="atag" style="display:none">auto-detected</span></div>
+    <div id="sc"><p class="em">Drop a file above to auto-detect sheets, or add manually.</p></div>
+    <button class="abtn" onclick="addManualSheet()">
+      <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add sheet manually
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">External data sources</div>
+    <div id="sl"><div class="row"><input type="text" placeholder="e.g. SharePoint list &mdash; Incidents 2024" /><button class="xbtn" onclick="dr(this)">&times;</button></div></div>
+    <button class="abtn" onclick="ar('sl','e.g. SQL table, CSV drop, Power Query connection')">
+      <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add source
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">DQA checks in the workbook</div>
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:12px">What each check tests, and how a pass is shown (cell colour, flag clears, count matches...)</p>
+    <div id="cl">
+      <div class="row"><input type="text" placeholder="e.g. Row count matches source &mdash; cell turns green" /><button class="xbtn" onclick="dr(this)">&times;</button></div>
+      <div class="row"><input type="text" placeholder="e.g. No blanks in Column D &mdash; red flag clears" /><button class="xbtn" onclick="dr(this)">&times;</button></div>
+    </div>
+    <button class="abtn" onclick="ar('cl','Describe a check and how a pass looks')">
+      <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add check
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">Anything else to include</div>
+    <textarea id="ex" placeholder="e.g. Links must be updated before refreshing sources. Sign-off goes in cell B2 on the Summary sheet. A macro runs on open."></textarea>
+  </div>
+
+  <button class="gbtn" onclick="build()">
+    <svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Build my prompt
+  </button>
+
+  <div class="out" id="oa">
+    <div class="div"></div>
+    <div class="oh">
+      <span class="ol">Your prompt &mdash; ready to paste</span>
+      <button class="cbtn" id="cb" onclick="cp()">
+        <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
+      </button>
+    </div>
+    <div class="pbox" id="pb"></div>
+    <div class="hint-box"><strong>Where to paste this:</strong> Open Claude (claude.ai), Microsoft Copilot, or ChatGPT. If using Copilot inside Excel, open the workbook first then paste into the Copilot sidebar.</div>
+  </div>
+</div>
+
+<script>
+const dz=document.getElementById('dz'),fi=document.getElementById('fi');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('over')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])pf(e.dataTransfer.files[0])});
+fi.addEventListener('change',()=>{if(fi.files[0])pf(fi.files[0])});
+
+function pf(file){
+  if(!file.name.match(/\.(xlsx|xls|xlsm)$/i)){alert('Please select an Excel file (.xlsx, .xls, or .xlsm)');return}
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+      document.getElementById('fn').textContent=file.name;
+      document.getElementById('fi2').textContent=wb.SheetNames.length+' sheet'+(wb.SheetNames.length!==1?'s':'')+' detected  \u00b7  '+(file.size/1024).toFixed(0)+' KB';
+      document.getElementById('fb').classList.add('on');
+      dz.style.display='none';
+      const c=document.getElementById('sc'),g=document.createElement('div');
+      g.className='sgrid';
+      wb.SheetNames.forEach((n,i)=>{
+        const t=document.createElement('div');t.className='stag';
+        t.innerHTML='<input type="checkbox" id="s'+i+'" checked><label for="s'+i+'">'+n+'</label>';
+        g.appendChild(t);
+      });
+      c.innerHTML='';c.appendChild(g);
+      document.getElementById('atag').style.display='inline';
+    }catch(e){alert('Could not read this file. Make sure it is a valid Excel workbook.')}
+  };
+  r.readAsArrayBuffer(file);
+}
+
+function clearFile(){
+  fi.value='';
+  document.getElementById('fb').classList.remove('on');
+  dz.style.display='';
+  document.getElementById('atag').style.display='none';
+  document.getElementById('sc').innerHTML='<p class="em">Drop a file above to auto-detect sheets, or add manually.</p>';
+}
+
+function addManualSheet(){
+  const c=document.getElementById('sc');
+  let g=c.querySelector('.sgrid');
+  if(!g){c.innerHTML='';g=document.createElement('div');g.className='sgrid';c.appendChild(g)}
+  const t=document.createElement('div');t.className='stag';t.style.padding='4px 8px';
+  const inp=document.createElement('input');inp.type='text';inp.placeholder='Sheet name';inp.style.cssText='width:140px;padding:4px 8px;font-size:13px;';
+  const d=document.createElement('button');d.className='xbtn';d.innerHTML='&times;';d.style.fontSize='16px';d.onclick=()=>t.remove();
+  t.appendChild(inp);t.appendChild(d);g.appendChild(t);inp.focus();
+}
+
+function gs(){
+  const res=[];
+  document.querySelectorAll('#sc .stag').forEach(t=>{
+    const cb=t.querySelector('input[type=checkbox]'),lb=t.querySelector('label'),ip=t.querySelector('input[type=text]');
+    if(cb&&cb.checked&&lb)res.push(lb.textContent.trim());
+    else if(!cb&&ip&&ip.value.trim())res.push(ip.value.trim());
+  });
+  return res;
+}
+
+function ar(id,ph){
+  const l=document.getElementById(id),r=document.createElement('div');
+  r.className='row';r.innerHTML='<input type="text" placeholder="'+ph+'"><button class="xbtn" onclick="dr(this)">&times;</button>';
+  l.appendChild(r);r.querySelector('input').focus();
+}
+
+function dr(btn){
+  const p=btn.closest('#sl,#cl');
+  if(p&&p.querySelectorAll('.row').length===1)return;
+  btn.parentElement.remove();
+}
+
+function gv(id){return Array.from(document.querySelectorAll('#'+id+' input')).map(i=>i.value.trim()).filter(Boolean)}
+
+function build(){
+  const sh=gs(),so=gv('sl'),ch=gv('cl'),ex=document.getElementById('ex').value.trim();
+  if(!sh.length&&!so.length&&!ch.length&&!ex){alert('Please fill in at least one field.');return}
+  let p='For this Excel workbook, write a step-by-step user guide for analysts on how to update it and complete all data quality checks.\n\n';
+  if(sh.length)p+='The workbook contains these sheets: '+sh.join(', ')+'.\n\n';
+  if(so.length)p+='It pulls data from these external sources:\n'+so.map((s,i)=>(i+1)+'. '+s).join('\n')+'\n\n';
+  if(ch.length)p+='The DQA checks built into the workbook are:\n'+ch.map((c,i)=>(i+1)+'. '+c).join('\n')+'\n\n';
+  if(ex)p+='Additional context: '+ex+'\n\n';
+  p+='Structure the guide in these four sections:\n\n';
+  p+='1. Updating data links — how to refresh all external links, confirm each has updated successfully, and what a failed or stale link looks like.\n\n';
+  p+='2. Refreshing external data sources — for each source listed above, how to trigger the refresh, confirm the correct data has loaded (row counts, date ranges, source identifiers), and what to do if something looks wrong.\n\n';
+  p+='3. Data quality checks — for each check listed above, what it is testing, what a passed check looks like (cell colour, flag, count match, etc.), how to mark it as complete or sign it off, and what to do if it fails.\n\n';
+  p+='4. Final review before sign-off — how to confirm all checks are marked, no errors or flags remain, and the workbook is ready for sign-off.\n\n';
+  p+='Use the actual sheet names listed above. Number every step. After each step leave a blank line with the placeholder text: [Screenshot]\n\nDo not explain basic Excel actions. No introduction or closing summary. Start immediately with Section 1.';
+  document.getElementById('pb').textContent=p;
+  const oa=document.getElementById('oa');oa.classList.add('on');oa.scrollIntoView({behavior:'smooth',block:'start'});
+  const cb=document.getElementById('cb');cb.classList.remove('done');
+  cb.innerHTML='<svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+}
+
+function cp(){
+  navigator.clipboard.writeText(document.getElementById('pb').textContent).then(()=>{
+    const cb=document.getElementById('cb');cb.classList.add('done');
+    cb.innerHTML='<svg class="ic" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+    setTimeout(()=>{
+      cb.classList.remove('done');
+      cb.innerHTML='<svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2 2v1"/></svg> Copy';
+    },2500);
+  });
+}
+</script>
+</body>
+</html>
