@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>DQA User Guide Builder</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#fff;--bg-s:#f7f7f5;--bg-t:#f0efeb;--tx:#1a1a18;--tx2:#5f5e5a;--txh:#9c9b96;--bd:rgba(0,0,0,.12);--bds:rgba(0,0,0,.22);--abg:#E6F1FB;--atx:#0C447C;--sbg:#EAF3DE;--stx:#27500A;--r:10px;--rs:6px}
-@media(prefers-color-scheme:dark){:root{--bg:#1e1e1c;--bg-s:#2a2a28;--bg-t:#242422;--tx:#e8e7e2;--tx2:#a8a7a2;--txh:#6a6a66;--bd:rgba(255,255,255,.1);--bds:rgba(255,255,255,.2);--abg:#0C447C;--atx:#B5D4F4;--sbg:#27500A;--stx:#C0DD97}}
+:root{
+  --bg:#fff;--bg-s:#f7f7f5;--bg-t:#f0efeb;
+  --tx:#1a1a18;--tx2:#5f5e5a;--txh:#9c9b96;
+  --bd:rgba(0,0,0,.12);--bds:rgba(0,0,0,.22);
+  --abg:#E6F1FB;--atx:#0C447C;
+  --sbg:#EAF3DE;--stx:#27500A;
+  --wbg:#FAEEDA;--wtx:#633806;
+  --r:10px;--rs:6px
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1e1e1c;--bg-s:#2a2a28;--bg-t:#242422;
+  --tx:#e8e7e2;--tx2:#a8a7a2;--txh:#6a6a66;
+  --bd:rgba(255,255,255,.1);--bds:rgba(255,255,255,.2);
+  --abg:#0C447C;--atx:#B5D4F4;
+  --sbg:#27500A;--stx:#C0DD97;
+  --wbg:#633806;--wtx:#FAC775
+}}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg-t);color:var(--tx);min-height:100vh;padding:2rem 1rem 4rem;line-height:1.6}
 .wrap{max-width:680px;margin:0 auto}
 h1{font-size:22px;font-weight:600;margin-bottom:4px}
@@ -25,13 +40,17 @@ h1{font-size:22px;font-weight:600;margin-bottom:4px}
 .fbar.on{display:flex}
 .fname{font-size:14px;font-weight:500;flex:1}
 .finfo{font-size:12px;color:var(--tx2)}
+.parsing{display:none;align-items:center;gap:10px;padding:12px 14px;background:var(--wbg);color:var(--wtx);border-radius:var(--rs);font-size:13px;margin-bottom:1rem}
+.parsing.on{display:flex}
 .card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
-.ctitle{font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.atag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--sbg);color:var(--stx);letter-spacing:.03em}
+.ctitle{font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.atag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--sbg);color:var(--stx);letter-spacing:.03em;white-space:nowrap}
+.wtag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--wbg);color:var(--wtx);letter-spacing:.03em;white-space:nowrap}
 .sgrid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .stag{display:flex;align-items:center;gap:6px;background:var(--bg-s);border:.5px solid var(--bd);border-radius:20px;padding:5px 12px;font-size:13px}
 .stag input[type=checkbox]{accent-color:#185FA5;width:14px;height:14px;cursor:pointer}
 .stag label{cursor:pointer}
+.section-note{font-size:12px;color:var(--tx2);margin-bottom:8px;padding:8px 10px;background:var(--bg-s);border-radius:var(--rs);border-left:2px solid var(--bds)}
 .row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
 input[type=text],textarea{width:100%;background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--rs);padding:9px 12px;font-size:14px;font-family:inherit;color:var(--tx);outline:none;transition:border-color .15s}
 input[type=text]:focus,textarea:focus{border-color:var(--bds)}
@@ -51,19 +70,22 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
 .cbtn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:6px 14px;background:var(--bg);color:var(--tx);border:.5px solid var(--bds);border-radius:var(--rs);cursor:pointer;font-family:inherit;transition:all .15s}
 .cbtn:hover{background:var(--bg-s)}
 .cbtn.done{background:var(--sbg);color:var(--stx);border-color:transparent}
-.pbox{background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;font-size:13.5px;line-height:1.7;color:var(--tx);white-space:pre-wrap;word-break:break-word;max-height:360px;overflow-y:auto}
+.pbox{background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;font-size:13.5px;line-height:1.7;color:var(--tx);white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto}
 .hint-box{margin-top:1rem;background:var(--abg);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--atx);line-height:1.6}
 .hint-box strong{font-weight:600}
 .div{height:.5px;background:var(--bd);margin:1.5rem 0}
 .ic{width:16px;height:16px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .em{font-size:13px;color:var(--txh);font-style:italic;padding:4px 0}
+.detected-summary{font-size:13px;color:var(--tx2);margin-bottom:10px;line-height:1.6}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--wtx);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="badge">Data Quality Assurance</div>
   <h1>DQA user guide builder</h1>
-  <p class="sub">Drop your Excel file — it is read locally and never leaves your computer. Then fill in your checks and sources, and get a prompt ready to paste into any AI.</p>
+  <p class="sub">Drop your Excel file in. It is read locally, never uploaded. The tool extracts your sheets, tables, named ranges, and Power Query connections automatically, then builds a tailored prompt you paste into any AI.</p>
 
   <div class="safe">
     <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -71,13 +93,19 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
   </div>
 
   <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
-    <input type="file" id="fi" accept=".xlsx,.xls,.xlsm" />
+    <input type="file" id="fi" accept=".xlsx,.xlsm,.xls"/>
     <svg style="width:40px;height:40px;stroke:var(--txh);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 12px" viewBox="0 0 24 24">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
+      <polyline points="14 2 14 8 20 8"/>
+      <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
     </svg>
     <h3>Drop your Excel file here</h3>
-    <p>or <span class="browse">browse to select it</span> &nbsp;&middot;&nbsp; .xlsx / .xls / .xlsm</p>
+    <p>or <span class="browse">browse to select it</span> &nbsp;&middot;&nbsp; .xlsx / .xlsm</p>
+  </div>
+
+  <div class="parsing" id="parsing">
+    <span class="spin"></span>
+    Reading workbook structure...
   </div>
 
   <div class="fbar" id="fb">
@@ -86,41 +114,80 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
     <button class="xbtn" onclick="clearFile()" aria-label="Remove">&times;</button>
   </div>
 
+  <!-- SHEETS -->
   <div class="card">
-    <div class="ctitle">Sheets to include <span class="atag" id="atag" style="display:none">auto-detected</span></div>
+    <div class="ctitle">
+      Sheets to include
+      <span class="atag" id="sheets-atag" style="display:none">auto-detected</span>
+    </div>
     <div id="sc"><p class="em">Drop a file above to auto-detect sheets, or add manually.</p></div>
     <button class="abtn" onclick="addManualSheet()">
       <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add sheet manually
     </button>
   </div>
 
+  <!-- TABLES -->
+  <div class="card" id="tables-card" style="display:none">
+    <div class="ctitle">
+      Tables detected
+      <span class="atag">auto-detected</span>
+    </div>
+    <div id="tables-container"></div>
+  </div>
+
+  <!-- POWER QUERY / CONNECTIONS -->
   <div class="card">
-    <div class="ctitle">External data sources</div>
-    <div id="sl"><div class="row"><input type="text" placeholder="e.g. SharePoint list &mdash; Incidents 2024" /><button class="xbtn" onclick="dr(this)">&times;</button></div></div>
-    <button class="abtn" onclick="ar('sl','e.g. SQL table, CSV drop, Power Query connection')">
+    <div class="ctitle">
+      External data sources
+      <span class="atag" id="conn-atag" style="display:none">auto-detected</span>
+      <span class="wtag" id="conn-wtag" style="display:none">review and edit</span>
+    </div>
+    <p class="detected-summary" id="conn-note" style="display:none"></p>
+    <div id="sl">
+      <div class="row"><input type="text" placeholder="e.g. SharePoint list, SQL table, CSV drop, Power Query connection"/><button class="xbtn" onclick="dr(this)">&times;</button></div>
+    </div>
+    <button class="abtn" onclick="ar('sl','e.g. SharePoint list, SQL table, Power Query')">
       <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add source
     </button>
   </div>
 
+  <!-- NAMED RANGES / DEFINED NAMES -->
+  <div class="card" id="names-card" style="display:none">
+    <div class="ctitle">
+      Named ranges and defined names
+      <span class="atag">auto-detected</span>
+      <span class="wtag">review and edit</span>
+    </div>
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:10px">These may be used as check references or key data anchors in the workbook.</p>
+    <div id="names-container"></div>
+  </div>
+
+  <!-- DQA CHECKS -->
   <div class="card">
-    <div class="ctitle">DQA checks in the workbook</div>
-    <p style="font-size:13px;color:var(--tx2);margin-bottom:12px">What each check tests, and how a pass is shown (cell colour, flag clears, count matches...)</p>
+    <div class="ctitle">
+      DQA checks
+      <span class="atag" id="checks-atag" style="display:none">auto-detected from headers</span>
+      <span class="wtag" id="checks-wtag" style="display:none">review and edit</span>
+    </div>
+    <p style="font-size:13px;color:var(--tx2);margin-bottom:12px">What each check tests, and how a pass is shown (cell colour, flag clears, count matches...).</p>
     <div id="cl">
-      <div class="row"><input type="text" placeholder="e.g. Row count matches source &mdash; cell turns green" /><button class="xbtn" onclick="dr(this)">&times;</button></div>
-      <div class="row"><input type="text" placeholder="e.g. No blanks in Column D &mdash; red flag clears" /><button class="xbtn" onclick="dr(this)">&times;</button></div>
+      <div class="row"><input type="text" placeholder="e.g. Row count matches source &mdash; cell turns green"/><button class="xbtn" onclick="dr(this)">&times;</button></div>
+      <div class="row"><input type="text" placeholder="e.g. No blanks in Column D &mdash; red flag clears"/><button class="xbtn" onclick="dr(this)">&times;</button></div>
     </div>
     <button class="abtn" onclick="ar('cl','Describe a check and how a pass looks')">
       <svg class="ic" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add check
     </button>
   </div>
 
+  <!-- EXTRA -->
   <div class="card">
     <div class="ctitle">Anything else to include</div>
     <textarea id="ex" placeholder="e.g. Links must be updated before refreshing sources. Sign-off goes in cell B2 on the Summary sheet. A macro runs on open."></textarea>
   </div>
 
   <button class="gbtn" onclick="build()">
-    <svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Build my prompt
+    <svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    Build my prompt
   </button>
 
   <div class="out" id="oa">
@@ -132,7 +199,9 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
       </button>
     </div>
     <div class="pbox" id="pb"></div>
-    <div class="hint-box"><strong>Where to paste this:</strong> Open Claude (claude.ai), Microsoft Copilot, or ChatGPT. If using Copilot inside Excel, open the workbook first then paste into the Copilot sidebar.</div>
+    <div class="hint-box">
+      <strong>Where to paste this:</strong> Open Claude (claude.ai), Microsoft Copilot, or ChatGPT. If using Copilot inside Excel, open the workbook first then paste into the Copilot sidebar.
+    </div>
   </div>
 </div>
 
@@ -143,36 +212,259 @@ dz.addEventListener('dragleave',()=>dz.classList.remove('over'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('over');if(e.dataTransfer.files[0])pf(e.dataTransfer.files[0])});
 fi.addEventListener('change',()=>{if(fi.files[0])pf(fi.files[0])});
 
-function pf(file){
-  if(!file.name.match(/\.(xlsx|xls|xlsm)$/i)){alert('Please select an Excel file (.xlsx, .xls, or .xlsm)');return}
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
-      const wb=XLSX.read(new Uint8Array(e.target.result),{type:'array'});
-      document.getElementById('fn').textContent=file.name;
-      document.getElementById('fi2').textContent=wb.SheetNames.length+' sheet'+(wb.SheetNames.length!==1?'s':'')+' detected  \u00b7  '+(file.size/1024).toFixed(0)+' KB';
-      document.getElementById('fb').classList.add('on');
-      dz.style.display='none';
-      const c=document.getElementById('sc'),g=document.createElement('div');
-      g.className='sgrid';
-      wb.SheetNames.forEach((n,i)=>{
-        const t=document.createElement('div');t.className='stag';
-        t.innerHTML='<input type="checkbox" id="s'+i+'" checked><label for="s'+i+'">'+n+'</label>';
-        g.appendChild(t);
+// ---- XML helpers ----
+function parseXML(str){return new DOMParser().parseFromString(str,'text/xml')}
+function getTags(doc,tag){return Array.from(doc.getElementsByTagNameNS('*',tag))}
+function attr(el,a){return el?el.getAttribute(a)||'':''}
+
+// ---- Main parser ----
+async function pf(file){
+  if(!file.name.match(/\.(xlsx|xlsm|xls)$/i)){alert('Please select an Excel file (.xlsx or .xlsm)');return}
+  document.getElementById('parsing').classList.add('on');
+  dz.style.display='none';
+  
+  try{
+    const buf=await file.arrayBuffer();
+    const zip=await JSZip.loadAsync(buf);
+    
+    // --- 1. Sheet names from workbook.xml ---
+    const wbXml=await zip.file('xl/workbook.xml').async('text');
+    const wbDoc=parseXML(wbXml);
+    const sheetEls=getTags(wbDoc,'sheet');
+    const sheetNames=sheetEls.map(s=>attr(s,'name')).filter(Boolean);
+
+    // --- 2. Defined names / named ranges ---
+    const definedNames=[];
+    getTags(wbDoc,'definedName').forEach(dn=>{
+      const name=attr(dn,'name');
+      const val=dn.textContent||'';
+      if(name&&!name.startsWith('_xlnm')&&!name.startsWith('Print_'))
+        definedNames.push({name,ref:val});
+    });
+
+    // --- 3. Power Query connections from xl/connections.xml ---
+    const connections=[];
+    const connFile=zip.file('xl/connections.xml');
+    if(connFile){
+      const connXml=await connFile.async('text');
+      const connDoc=parseXML(connXml);
+      // dbPr = database connections (SQL, ODBC)
+      getTags(connDoc,'connection').forEach(c=>{
+        const name=attr(c,'name');
+        const desc=attr(c,'description');
+        const type=attr(c,'type');
+        const dbPr=c.getElementsByTagNameNS('*','dbPr')[0];
+        const olapPr=c.getElementsByTagNameNS('*','olapPr')[0];
+        const webPr=c.getElementsByTagNameNS('*','webPr')[0];
+        let detail='';
+        if(dbPr){detail='Database: '+attr(dbPr,'connection')}
+        else if(webPr){detail='Web: '+attr(webPr,'url')}
+        else if(olapPr){detail='OLAP/Cube connection'}
+        if(name)connections.push({name,desc,type,detail});
       });
-      c.innerHTML='';c.appendChild(g);
-      document.getElementById('atag').style.display='inline';
-    }catch(e){alert('Could not read this file. Make sure it is a valid Excel workbook.')}
-  };
-  r.readAsArrayBuffer(file);
+    }
+
+    // --- 4. Power Query queries from xl/queryTables & customXml ---
+    const queries=[];
+    // Check for xl/query/ folder (Power Query M queries)
+    Object.keys(zip.files).forEach(path=>{
+      if(path.startsWith('xl/queries/')&&path.endsWith('.xml')){
+        queries.push(path.replace('xl/queries/','').replace('.xml',''));
+      }
+    });
+    // Also check customXml for Power Query metadata
+    const pqNames=[];
+    for(const path of Object.keys(zip.files)){
+      if(path.startsWith('xl/customXml/')&&path.endsWith('.xml')){
+        try{
+          const xml=await zip.file(path).async('text');
+          if(xml.includes('PowerQueryMashup')||xml.includes('Query')){
+            const matches=xml.matchAll(/Name="([^"]+)"/g);
+            for(const m of matches)if(m[1]&&!pqNames.includes(m[1]))pqNames.push(m[1]);
+          }
+        }catch(e){}
+      }
+    }
+
+    // --- 5. Tables and their column headers ---
+    const tables=[];
+    for(const path of Object.keys(zip.files)){
+      if(path.startsWith('xl/tables/')&&path.endsWith('.xml')){
+        try{
+          const txml=await zip.file(path).async('text');
+          const tdoc=parseXML(txml);
+          const tbl=tdoc.getElementsByTagNameNS('*','table')[0];
+          if(tbl){
+            const tname=attr(tbl,'displayName')||attr(tbl,'name');
+            const ref=attr(tbl,'ref');
+            const cols=Array.from(tdoc.getElementsByTagNameNS('*','tableColumn')).map(c=>attr(c,'name')).filter(Boolean);
+            // Find which sheet this table belongs to
+            let sheet='';
+            for(const p of Object.keys(zip.files)){
+              if(p.startsWith('xl/worksheets/')&&p.endsWith('.rels')){
+                try{
+                  const rxml=await zip.file(p).async('text');
+                  if(rxml.includes(path.replace('xl/','../'))){ 
+                    // Get sheet name from sheet index
+                    const idx=parseInt(p.match(/sheet(\d+)/)?.[1]||'0')-1;
+                    sheet=sheetNames[idx]||'';
+                  }
+                }catch(e){}
+              }
+            }
+            tables.push({name:tname,sheet,ref,cols});
+          }
+        }catch(e){}
+      }
+    }
+
+    // --- 6. Scan sheet headers for DQA-like check columns ---
+    const detectedChecks=[];
+    const checkKeywords=['check','status','flag','pass','fail','valid','result','complete','verified','ok','error','match','count','expected','actual'];
+    for(let i=0;i<Math.min(sheetNames.length,10);i++){
+      const sheetFile=zip.file('xl/worksheets/sheet'+(i+1)+'.xml');
+      if(!sheetFile)continue;
+      try{
+        const sxml=await sheetFile.async('text');
+        const sdoc=parseXML(sxml);
+        // Get shared strings
+        let ss=[];
+        const ssFile=zip.file('xl/sharedStrings.xml');
+        if(ssFile){
+          const ssxml=await ssFile.async('text');
+          const ssdoc=parseXML(ssxml);
+          ss=Array.from(ssdoc.getElementsByTagNameNS('*','t')).map(t=>t.textContent||'');
+        }
+        // Read first row cells
+        const rows=Array.from(sdoc.getElementsByTagNameNS('*','row'));
+        if(rows.length>0){
+          const firstRow=rows[0];
+          const cells=Array.from(firstRow.getElementsByTagNameNS('*','c'));
+          cells.forEach(cell=>{
+            let val='';
+            const t=attr(cell,'t');
+            if(t==='s'){
+              const idx=parseInt(cell.getElementsByTagNameNS('*','v')[0]?.textContent||'0');
+              val=ss[idx]||'';
+            }else{
+              val=cell.getElementsByTagNameNS('*','v')[0]?.textContent||'';
+            }
+            val=val.trim();
+            if(val&&checkKeywords.some(k=>val.toLowerCase().includes(k))){
+              detectedChecks.push(sheetNames[i]+': "'+val+'" column detected');
+            }
+          });
+        }
+      }catch(e){}
+    }
+
+    // --- Render results ---
+    document.getElementById('parsing').classList.remove('on');
+    document.getElementById('fb').classList.add('on');
+    document.getElementById('fn').textContent=file.name;
+    document.getElementById('fi2').textContent=
+      sheetNames.length+' sheets  \u00b7  '+
+      (tables.length?tables.length+' tables  \u00b7  ':'')+
+      (connections.length+pqNames.length?'connections found  \u00b7  ':'')+
+      (definedNames.length?definedNames.length+' named ranges  \u00b7  ':'')+
+      (file.size/1024).toFixed(0)+' KB';
+
+    // Render sheets
+    renderSheetCheckboxes(sheetNames);
+    document.getElementById('sheets-atag').style.display='inline';
+
+    // Render tables
+    if(tables.length){
+      const tc=document.getElementById('tables-container');
+      tc.innerHTML='';
+      tables.forEach(t=>{
+        const div=document.createElement('div');
+        div.style.cssText='margin-bottom:10px;padding:10px;background:var(--bg-s);border-radius:var(--rs);font-size:13px;';
+        div.innerHTML='<strong style="color:var(--tx)">'+t.name+'</strong>'+(t.sheet?' <span style="color:var(--tx2)">('+t.sheet+')</span>':'')+
+          (t.cols.length?'<br><span style="color:var(--tx2)">Columns: '+t.cols.slice(0,8).join(', ')+(t.cols.length>8?' ...':'')+' </span>':'');
+        tc.appendChild(div);
+      });
+      document.getElementById('tables-card').style.display='block';
+    }
+
+    // Render connections / Power Query
+    const allConn=[...connections.map(c=>c.name+(c.detail?' ('+c.detail+')':'')), ...pqNames];
+    if(allConn.length){
+      const sl=document.getElementById('sl');
+      sl.innerHTML='';
+      allConn.forEach(c=>{
+        const row=document.createElement('div');row.className='row';
+        row.innerHTML='<input type="text" value="'+escHtml(c)+'"/><button class="xbtn" onclick="dr(this)">&times;</button>';
+        sl.appendChild(row);
+      });
+      document.getElementById('conn-atag').style.display='inline';
+      document.getElementById('conn-wtag').style.display='inline';
+      document.getElementById('conn-note').style.display='block';
+      document.getElementById('conn-note').textContent=allConn.length+' connection'+(allConn.length>1?'s':'')+' auto-detected from the workbook. Review and add any missing ones.';
+    }
+
+    // Render named ranges
+    if(definedNames.length){
+      const nc=document.getElementById('names-container');
+      nc.innerHTML='';
+      definedNames.forEach(d=>{
+        const row=document.createElement('div');row.className='row';
+        row.innerHTML='<input type="text" value="'+escHtml(d.name+' = '+d.ref)+'"/><button class="xbtn" onclick="dr(this)">&times;</button>';
+        nc.appendChild(row);
+      });
+      document.getElementById('names-card').style.display='block';
+    }
+
+    // Render detected checks
+    if(detectedChecks.length){
+      const cl=document.getElementById('cl');
+      cl.innerHTML='';
+      detectedChecks.forEach(c=>{
+        const row=document.createElement('div');row.className='row';
+        row.innerHTML='<input type="text" value="'+escHtml(c)+'"/><button class="xbtn" onclick="dr(this)">&times;</button>';
+        cl.appendChild(row);
+      });
+      // Add empty row for more
+      ar('cl','Add another check');
+      document.getElementById('checks-atag').style.display='inline';
+      document.getElementById('checks-wtag').style.display='inline';
+    }
+
+  }catch(err){
+    document.getElementById('parsing').classList.remove('on');
+    dz.style.display='';
+    alert('Could not read this file. Make sure it is a valid .xlsx or .xlsm workbook.\n\n'+err.message);
+  }
 }
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 
 function clearFile(){
   fi.value='';
   document.getElementById('fb').classList.remove('on');
   dz.style.display='';
-  document.getElementById('atag').style.display='none';
+  document.getElementById('sheets-atag').style.display='none';
+  document.getElementById('conn-atag').style.display='none';
+  document.getElementById('conn-wtag').style.display='none';
+  document.getElementById('conn-note').style.display='none';
+  document.getElementById('checks-atag').style.display='none';
+  document.getElementById('checks-wtag').style.display='none';
+  document.getElementById('tables-card').style.display='none';
+  document.getElementById('names-card').style.display='none';
   document.getElementById('sc').innerHTML='<p class="em">Drop a file above to auto-detect sheets, or add manually.</p>';
+  document.getElementById('sl').innerHTML='<div class="row"><input type="text" placeholder="e.g. SharePoint list, SQL table, CSV drop, Power Query connection"/><button class="xbtn" onclick="dr(this)">&times;</button></div>';
+  document.getElementById('cl').innerHTML='<div class="row"><input type="text" placeholder="e.g. Row count matches source &mdash; cell turns green"/><button class="xbtn" onclick="dr(this)">&times;</button></div><div class="row"><input type="text" placeholder="e.g. No blanks in Column D &mdash; red flag clears"/><button class="xbtn" onclick="dr(this)">&times;</button></div>';
+}
+
+function renderSheetCheckboxes(sheets){
+  const c=document.getElementById('sc'),g=document.createElement('div');
+  g.className='sgrid';
+  sheets.forEach((n,i)=>{
+    const t=document.createElement('div');t.className='stag';
+    t.innerHTML='<input type="checkbox" id="sh'+i+'" checked><label for="sh'+i+'">'+n+'</label>';
+    g.appendChild(t);
+  });
+  c.innerHTML='';c.appendChild(g);
 }
 
 function addManualSheet(){
@@ -202,27 +494,43 @@ function ar(id,ph){
 }
 
 function dr(btn){
-  const p=btn.closest('#sl,#cl');
+  const p=btn.closest('[id]');
   if(p&&p.querySelectorAll('.row').length===1)return;
   btn.parentElement.remove();
 }
 
-function gv(id){return Array.from(document.querySelectorAll('#'+id+' input')).map(i=>i.value.trim()).filter(Boolean)}
+function gv(id){return Array.from(document.querySelectorAll('#'+id+' input[type=text]')).map(i=>i.value.trim()).filter(Boolean)}
+
+function getTables(){
+  const res=[];
+  document.querySelectorAll('#tables-container strong').forEach(s=>res.push(s.textContent.trim()));
+  return res;
+}
+
+function getNames(){
+  return Array.from(document.querySelectorAll('#names-container input[type=text]')).map(i=>i.value.trim()).filter(Boolean);
+}
 
 function build(){
   const sh=gs(),so=gv('sl'),ch=gv('cl'),ex=document.getElementById('ex').value.trim();
+  const tbl=getTables(),nm=getNames();
   if(!sh.length&&!so.length&&!ch.length&&!ex){alert('Please fill in at least one field.');return}
+
   let p='For this Excel workbook, write a step-by-step user guide for analysts on how to update it and complete all data quality checks.\n\n';
   if(sh.length)p+='The workbook contains these sheets: '+sh.join(', ')+'.\n\n';
-  if(so.length)p+='It pulls data from these external sources:\n'+so.map((s,i)=>(i+1)+'. '+s).join('\n')+'\n\n';
+  if(tbl.length)p+='The workbook contains these named tables: '+tbl.join(', ')+'.\n\n';
+  if(nm.length)p+='The workbook uses these named ranges and defined names: '+nm.join('; ')+'.\n\n';
+  if(so.length)p+='It pulls data from these external sources and connections:\n'+so.map((s,i)=>(i+1)+'. '+s).join('\n')+'\n\n';
   if(ch.length)p+='The DQA checks built into the workbook are:\n'+ch.map((c,i)=>(i+1)+'. '+c).join('\n')+'\n\n';
   if(ex)p+='Additional context: '+ex+'\n\n';
+
   p+='Structure the guide in these four sections:\n\n';
-  p+='1. Updating data links — how to refresh all external links, confirm each has updated successfully, and what a failed or stale link looks like.\n\n';
-  p+='2. Refreshing external data sources — for each source listed above, how to trigger the refresh, confirm the correct data has loaded (row counts, date ranges, source identifiers), and what to do if something looks wrong.\n\n';
-  p+='3. Data quality checks — for each check listed above, what it is testing, what a passed check looks like (cell colour, flag, count match, etc.), how to mark it as complete or sign it off, and what to do if it fails.\n\n';
-  p+='4. Final review before sign-off — how to confirm all checks are marked, no errors or flags remain, and the workbook is ready for sign-off.\n\n';
-  p+='Use the actual sheet names listed above. Number every step. After each step leave a blank line with the placeholder text: [Screenshot]\n\nDo not explain basic Excel actions. No introduction or closing summary. Start immediately with Section 1.';
+  p+='1. Updating data links -- how to refresh all external links, confirm each has updated successfully, and what a failed or stale link looks like.\n\n';
+  p+='2. Refreshing external data sources -- for each source and connection listed above, how to trigger the refresh, confirm the correct data has loaded (row counts, date ranges, source identifiers), and what to do if something looks wrong.\n\n';
+  p+='3. Data quality checks -- for each check listed above, what it is testing, what a passed check looks like (cell colour, flag clears, count match, named range value, etc.), how to mark it as complete or sign it off, and what to do if it fails.\n\n';
+  p+='4. Final review before sign-off -- how to confirm all checks are marked, no errors or flags remain, all named ranges show expected values, and the workbook is ready for sign-off.\n\n';
+  p+='Use the exact sheet names, table names, and connection names listed above. Number every step. After each step leave a blank line with the placeholder text: [Screenshot]\n\nDo not explain basic Excel actions. No introduction or closing summary. Start immediately with Section 1.';
+
   document.getElementById('pb').textContent=p;
   const oa=document.getElementById('oa');oa.classList.add('on');oa.scrollIntoView({behavior:'smooth',block:'start'});
   const cb=document.getElementById('cb');cb.classList.remove('done');
