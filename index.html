@@ -14,6 +14,7 @@
   --abg:#E6F1FB;--atx:#0C447C;
   --sbg:#EAF3DE;--stx:#27500A;
   --wbg:#FAEEDA;--wtx:#633806;
+  --rbg:#FDECEA;--rtx:#7A1C1C;
   --r:10px;--rs:6px
 }
 @media(prefers-color-scheme:dark){:root{
@@ -22,7 +23,8 @@
   --bd:rgba(255,255,255,.1);--bds:rgba(255,255,255,.2);
   --abg:#0C447C;--atx:#B5D4F4;
   --sbg:#27500A;--stx:#C0DD97;
-  --wbg:#633806;--wtx:#FAC775
+  --wbg:#633806;--wtx:#FAC775;
+  --rbg:#7A1C1C;--rtx:#FAB4B4
 }}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;background:var(--bg-t);color:var(--tx);min-height:100vh;padding:2rem 1rem 4rem;line-height:1.6}
 .wrap{max-width:720px;margin:0 auto}
@@ -44,16 +46,27 @@ h1{font-size:22px;font-weight:600;margin-bottom:4px}
 .parsing.on{display:flex}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid var(--wtx);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* Privacy warning banner */
+.privacy-warn{display:none;align-items:flex-start;gap:10px;background:var(--rbg);color:var(--rtx);border-radius:var(--rs);padding:12px 14px;font-size:13px;margin-bottom:1rem;line-height:1.6}
+.privacy-warn.on{display:flex}
+.privacy-warn strong{font-weight:600}
+.privacy-warn ul{margin:4px 0 0 16px}
+.privacy-warn li{margin-bottom:2px}
+.mask-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:600;cursor:pointer;padding:4px 10px;border-radius:20px;background:var(--rtx);color:#fff;border:none;font-family:inherit}
+.mask-toggle:hover{opacity:.85}
+
 .card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
 .ctitle{font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .atag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--sbg);color:var(--stx);letter-spacing:.03em}
 .wtag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--wbg);color:var(--wtx);letter-spacing:.03em}
-/* Sheet grid */
+.rtag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--rbg);color:var(--rtx);letter-spacing:.03em}
+
 .sgrid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .stag{display:flex;align-items:center;gap:6px;background:var(--bg-s);border:.5px solid var(--bd);border-radius:20px;padding:5px 12px;font-size:13px}
 .stag input[type=checkbox]{accent-color:#185FA5;width:14px;height:14px;cursor:pointer}
 .stag label{cursor:pointer}
-/* Sheet detail accordion */
+
 .sheet-detail{margin-top:10px}
 .sheet-row{border:.5px solid var(--bd);border-radius:var(--rs);margin-bottom:6px;overflow:hidden}
 .sheet-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--bg-s);font-size:13px;font-weight:500;user-select:none}
@@ -66,7 +79,7 @@ h1{font-size:22px;font-weight:600;margin-bottom:4px}
 .sheet-body tr:last-child td{border-bottom:none}
 .chevron{transition:transform .2s;font-size:10px;color:var(--txh)}
 .chevron.open{transform:rotate(90deg)}
-/* Generic row inputs */
+
 .row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
 input[type=text],textarea{width:100%;background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--rs);padding:9px 12px;font-size:14px;font-family:inherit;color:var(--tx);outline:none;transition:border-color .15s}
 input[type=text]:focus,textarea:focus{border-color:var(--bds)}
@@ -81,11 +94,16 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
 .gbtn:active{transform:scale(.99)}
 .out{display:none;margin-top:1.5rem}
 .out.on{display:block}
-.oh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.oh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
 .ol{font-size:13px;font-weight:500;color:var(--tx2)}
 .cbtn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:6px 14px;background:var(--bg);color:var(--tx);border:.5px solid var(--bds);border-radius:var(--rs);cursor:pointer;font-family:inherit;transition:all .15s}
 .cbtn:hover{background:var(--bg-s)}
 .cbtn.done{background:var(--sbg);color:var(--stx);border-color:transparent}
+
+/* Prompt warning above pbox */
+.prompt-warn{display:none;align-items:flex-start;gap:8px;background:var(--wbg);color:var(--wtx);border-radius:var(--rs);padding:10px 14px;font-size:13px;margin-bottom:10px;line-height:1.6}
+.prompt-warn.on{display:flex}
+
 .pbox{background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;font-size:13px;line-height:1.7;color:var(--tx);white-space:pre-wrap;word-break:break-word;max-height:500px;overflow-y:auto}
 .hint-box{margin-top:1rem;background:var(--abg);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--atx);line-height:1.6}
 .hint-box strong{font-weight:600}
@@ -99,11 +117,25 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
 <div class="wrap">
   <div class="badge">Data Quality Assurance</div>
   <h1>DQA user guide builder</h1>
-  <p class="sub">Drop your Excel file in. It is read entirely in your browser — never uploaded. The tool reads your sheet contents, tables, checks, connections, and named ranges, then builds a fully tailored prompt for any AI.</p>
+  <p class="sub">Drop your Excel file in. It is read entirely in your browser and never uploaded. The tool extracts your sheet contents, tables, checks, named ranges, and connections, then builds a tailored prompt for any AI.</p>
 
   <div class="safe">
     <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     100% local. Your file never leaves your computer.
+  </div>
+
+  <!-- Privacy warning: shown when sensitive links detected -->
+  <div class="privacy-warn" id="privacy-warn">
+    <svg class="ic" style="flex-shrink:0;margin-top:2px" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <div>
+      <strong>Sensitive content detected in connections or links.</strong>
+      <div id="privacy-warn-detail" style="margin-top:4px"></div>
+      <div style="margin-top:8px">Sensitive values have been automatically masked below. <strong>Review every field before copying the prompt</strong> and remove or edit anything you do not want to send to an external AI.</div>
+      <button class="mask-toggle" id="mask-toggle-btn" onclick="toggleMask()">
+        <svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Show original values
+      </button>
+    </div>
   </div>
 
   <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
@@ -125,7 +157,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
     <button class="xbtn" onclick="clearFile()">&times;</button>
   </div>
 
-  <!-- SHEETS WITH CONTENT PREVIEW -->
+  <!-- SHEETS -->
   <div class="card">
     <div class="ctitle">
       Sheets
@@ -138,12 +170,13 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
     </button>
   </div>
 
-  <!-- CONNECTIONS / POWER QUERY -->
+  <!-- CONNECTIONS -->
   <div class="card">
     <div class="ctitle">
       External data sources and connections
       <span class="atag" id="conn-atag" style="display:none">auto-detected</span>
       <span class="wtag" id="conn-wtag" style="display:none">review and edit</span>
+      <span class="rtag" id="conn-rtag" style="display:none">sensitive values masked</span>
     </div>
     <div id="conn-note" class="conn-note" style="display:none"></div>
     <div id="sl"><div class="row"><input type="text" placeholder="e.g. SharePoint list, SQL table, Power Query connection"/><button class="xbtn" onclick="dr(this)">&times;</button></div></div>
@@ -154,14 +187,18 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
 
   <!-- NAMED RANGES -->
   <div class="card" id="names-card" style="display:none">
-    <div class="ctitle">Named ranges and defined names <span class="atag">auto-detected</span></div>
+    <div class="ctitle">
+      Named ranges and defined names
+      <span class="atag">auto-detected</span>
+      <span class="rtag" id="names-rtag" style="display:none">sensitive values masked</span>
+    </div>
     <div id="names-container"></div>
   </div>
 
-  <!-- EXTRA CONTEXT -->
+  <!-- EXTRA -->
   <div class="card">
     <div class="ctitle">Anything else to include</div>
-    <textarea id="ex" placeholder="e.g. Links must be updated before refreshing sources. Sign-off goes in cell B2 on the Summary sheet. A macro runs on open."></textarea>
+    <textarea id="ex" placeholder="e.g. Cell colours: green = check passed, red = failed. Links must be updated before refreshing sources. Sign-off goes in cell B2 on the Summary sheet."></textarea>
   </div>
 
   <button class="gbtn" onclick="build()">
@@ -172,21 +209,83 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
   <div class="out" id="oa">
     <div class="div"></div>
     <div class="oh">
-      <span class="ol">Your prompt &mdash; ready to paste into Claude, Copilot, or ChatGPT</span>
+      <span class="ol">Your prompt</span>
       <button class="cbtn" id="cb" onclick="cp()">
         <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
       </button>
     </div>
+    <div class="prompt-warn" id="prompt-warn">
+      <svg class="ic" style="flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span><strong>Review before copying.</strong> This prompt was built from your workbook content. Check it does not contain sensitive server names, file paths, or URLs you do not want to send to an external AI. Edit the fields above and rebuild if needed.</span>
+    </div>
     <div class="pbox" id="pb"></div>
     <div class="hint-box">
-      <strong>Where to paste this:</strong> Open Claude (claude.ai), Microsoft Copilot, or ChatGPT. If using Copilot inside Excel, open the workbook first then paste into the Copilot sidebar.
+      <strong>Where to paste this:</strong> Claude (claude.ai) gives the best results. Also works with ChatGPT and Copilot at copilot.microsoft.com. Avoid the Copilot sidebar in Excel as it has a short input limit and will cut off long prompts.
     </div>
   </div>
 </div>
 
 <script>
 // ---- state ----
-let WB = null; // full parsed workbook context
+let WB = null;
+let maskingActive = true;
+let rawConnections = [];  // original unmasked values
+let maskedConnections = []; // masked values
+
+// ---- sensitive data masking ----
+function maskSensitive(s) {
+  let out = s;
+  // SharePoint URLs
+  out = out.replace(/https?:\/\/[a-zA-Z0-9\-]+\.sharepoint\.com[^\s))]*/g, '[SharePoint URL redacted]');
+  // All other http/https URLs
+  out = out.replace(/https?:\/\/[a-zA-Z0-9\-\.]+[^\s);,)]*/g, '[URL redacted]');
+  // jdbc and other DB protocols
+  out = out.replace(/jdbc:[^\s;,)]*/gi, '[DB connection redacted]');
+  // UNC paths \\server\share
+  out = out.replace(/\\\\[a-zA-Z0-9\-\.]+\\[^\s;,)]*/g, '[Network path redacted]');
+  // Windows paths C:\ or C:/
+  out = out.replace(/[A-Za-z]:[/\\][^\s;,)]*/g, '[Local path redacted]');
+  // IP addresses
+  out = out.replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, '[IP redacted]');
+  // SQL/ODBC connection string key=value pairs
+  out = out.replace(/(Server|Data Source|DataSource|DSN|Initial Catalog|Database|Uid|User ID|Pwd|Password|PWD|UID|Host|Hostname)=([^;),\s]+)/gi,
+    (m, key) => key + '=[redacted]');
+  return out;
+}
+
+function hasSensitiveContent(s) {
+  return s !== maskSensitive(s);
+}
+
+function toggleMask() {
+  maskingActive = !maskingActive;
+  const btn = document.getElementById('mask-toggle-btn');
+  const sl = document.getElementById('sl');
+  const nc = document.getElementById('names-container');
+
+  // Update connections fields
+  const connInputs = sl.querySelectorAll('input[type=text]');
+  connInputs.forEach((inp, i) => {
+    const raw = rawConnections[i];
+    if (raw !== undefined) inp.value = maskingActive ? maskedConnections[i] : raw;
+  });
+
+  // Update named range fields
+  if (WB && WB.definedNames.length) {
+    const nameInputs = nc.querySelectorAll('input[type=text]');
+    nameInputs.forEach((inp, i) => {
+      const dn = WB.definedNames[i];
+      if (dn) {
+        const raw = dn.name + ' refers to ' + dn.ref;
+        inp.value = maskingActive ? maskSensitive(raw) : raw;
+      }
+    });
+  }
+
+  btn.innerHTML = maskingActive
+    ? '<svg style="width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Show original values'
+    : '<svg style="width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide original values';
+}
 
 // ---- drag and drop ----
 const dz=document.getElementById('dz'),fi=document.getElementById('fi');
@@ -200,103 +299,94 @@ function px(str){return new DOMParser().parseFromString(str,'text/xml')}
 function tags(doc,tag){return Array.from(doc.getElementsByTagNameNS('*',tag))}
 function at(el,a){return el?el.getAttribute(a)||'':''}
 
-// ---- Read a sheet: returns array of row-objects {col: value} ----
-function readSheet(xml, ss, maxRows=50){
-  const doc=px(xml), rows=[];
+function readSheet(xml,ss,maxRows=60){
+  const doc=px(xml),rows=[];
   for(const row of tags(doc,'row')){
     const rn=parseInt(at(row,'r')||'0');
-    if(maxRows && rn>maxRows) break;
+    if(maxRows&&rn>maxRows)break;
     const cells={};
     for(const cell of tags(row,'c')){
-      const ref=at(cell,'r');
-      const col=ref.replace(/[0-9]/g,'');
+      const ref=at(cell,'r'),col=ref.replace(/[0-9]/g,'');
       const t=at(cell,'t');
       let val='';
       const vel=cell.getElementsByTagNameNS('*','v')[0];
       const isel=cell.getElementsByTagNameNS('*','is')[0];
-      if(isel){
-        val=Array.from(isel.getElementsByTagNameNS('*','t')).map(x=>x.textContent).join('');
-      } else if(t==='s'&&vel){
-        val=ss[parseInt(vel.textContent)]||'';
-      } else if(vel){
-        val=vel.textContent||'';
-      }
-      if(val.trim()) cells[col]=val.trim();
+      if(isel){val=Array.from(isel.getElementsByTagNameNS('*','t')).map(x=>x.textContent).join('')}
+      else if(t==='s'&&vel){val=ss[parseInt(vel.textContent)]||''}
+      else if(vel){val=vel.textContent||''}
+      if(val.trim())cells[col]=val.trim();
     }
-    if(Object.keys(cells).length) rows.push(cells);
+    if(Object.keys(cells).length)rows.push(cells);
   }
   return rows;
 }
 
-// ---- Convert rows to structured object using first row as headers ----
 function rowsToRecords(rows){
-  if(!rows.length) return {headers:[],records:[]};
-  const headerRow=rows[0];
-  const cols=Object.keys(headerRow).sort();
+  if(!rows.length)return{headers:[],records:[]};
+  const headerRow=rows[0],cols=Object.keys(headerRow).sort();
   const headers=cols.map(c=>headerRow[c]);
   const records=rows.slice(1).map(row=>cols.map(c=>row[c]||''));
-  return {headers,records};
+  return{headers,records};
 }
 
-// ---- Main file processor ----
 async function pf(file){
   if(!file.name.match(/\.(xlsx|xlsm)$/i)){alert('Please select an .xlsx or .xlsm file');return}
   document.getElementById('parsing').classList.add('on');
   dz.style.display='none';
+  maskingActive=true;
 
   try{
     const zip=await JSZip.loadAsync(await file.arrayBuffer());
 
-    // 1. Shared strings
+    // Shared strings
     const ss=[];
     const ssf=zip.file('xl/sharedStrings.xml');
     if(ssf){
       const doc=px(await ssf.async('text'));
-      for(const si of tags(doc,'si')){
+      for(const si of tags(doc,'si'))
         ss.push(Array.from(si.getElementsByTagNameNS('*','t')).map(t=>t.textContent||'').join(''));
-      }
     }
 
-    // 2. Sheet names + rId map
+    // Sheet names + rIds
     const wbXml=await zip.file('xl/workbook.xml').async('text');
     const wbDoc=px(wbXml);
     const sheetEls=tags(wbDoc,'sheet');
     const sheetNames=sheetEls.map(s=>at(s,'name')).filter(Boolean);
     const sheetRids=sheetEls.map(s=>at(s,'r:id')||s.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id')||'');
 
-    // 3. Workbook rels -> sheet file paths
+    // Rels -> paths
     const wbRels=px(await zip.file('xl/_rels/workbook.xml.rels').async('text'));
     const ridToPath={};
     for(const rel of tags(wbRels,'Relationship')){
-      const id=at(rel,'Id'), tgt=at(rel,'Target');
+      const id=at(rel,'Id'),tgt=at(rel,'Target');
       ridToPath[id]='xl/'+tgt.replace(/^\.\.\//,'').replace(/^xl\//,'');
     }
 
-    // 4. Read each sheet content (up to 60 rows per sheet)
+    // Read sheets
     const sheetData=[];
     for(let i=0;i<sheetNames.length;i++){
       const rid=sheetRids[i];
       let path=ridToPath[rid]||`xl/worksheets/sheet${i+1}.xml`;
-      if(!path.startsWith('xl/')) path='xl/'+path;
+      if(!path.startsWith('xl/'))path='xl/'+path;
       const sf=zip.file(path);
       if(!sf){sheetData.push({name:sheetNames[i],rows:[],headers:[],records:[]});continue}
       const rows=readSheet(await sf.async('text'),ss,60);
-      const {headers,records}=rowsToRecords(rows);
+      const{headers,records}=rowsToRecords(rows);
       sheetData.push({name:sheetNames[i],rows,headers,records});
     }
 
-    // 5. Named ranges
+    // Named ranges
     const definedNames=[];
     for(const dn of tags(wbDoc,'definedName')){
-      const name=at(dn,'name'), val=dn.textContent||'';
+      const name=at(dn,'name'),val=dn.textContent||'';
       if(name&&!name.startsWith('_xlnm')&&!name.includes('Print_')&&!name.includes('_FilterDatabase'))
         definedNames.push({name,ref:val});
     }
 
-    // 6. Tables
+    // Tables
     const tables=[];
     for(const path of Object.keys(zip.files)){
-      if(!path.startsWith('xl/tables/')||!path.endsWith('.xml')) continue;
+      if(!path.startsWith('xl/tables/')||!path.endsWith('.xml'))continue;
       try{
         const tdoc=px(await zip.file(path).async('text'));
         const tbl=tdoc.getElementsByTagNameNS('*','table')[0];
@@ -308,38 +398,43 @@ async function pf(file){
       }catch(e){}
     }
 
-    // 7. Connections / Power Query
+    // Connections / Power Query
     const connections=[];
     const connf=zip.file('xl/connections.xml');
     if(connf){
       const cdoc=px(await connf.async('text'));
       for(const c of tags(cdoc,'connection')){
-        const name=at(c,'name'), desc=at(c,'description');
+        const name=at(c,'name'),desc=at(c,'description');
         const dbPr=c.getElementsByTagNameNS('*','dbPr')[0];
         const webPr=c.getElementsByTagNameNS('*','webPr')[0];
         let detail=desc||'';
-        if(dbPr) detail=(at(dbPr,'connection')||detail).substring(0,120);
-        else if(webPr) detail=at(webPr,'url').substring(0,120)||detail;
-        if(name) connections.push(name+(detail?' ('+detail+')':''));
+        if(dbPr)detail=(at(dbPr,'connection')||detail).substring(0,200);
+        else if(webPr)detail=at(webPr,'url').substring(0,200)||detail;
+        if(name)connections.push(name+(detail?' ('+detail+')':''));
       }
     }
-    // Power Query query names from customXml
     for(const path of Object.keys(zip.files)){
-      if(!path.startsWith('xl/customXml/')||!path.endsWith('.xml')) continue;
+      if(!path.startsWith('xl/customXml/')||!path.endsWith('.xml'))continue;
       try{
         const xml=await zip.file(path).async('text');
         if(xml.includes('PowerQuery')||xml.includes('mashup')){
-          for(const m of xml.matchAll(/Name="([^"]+)"/g)){
-            if(m[1]&&!connections.includes(m[1])) connections.push('Power Query: '+m[1]);
-          }
+          for(const m of xml.matchAll(/Name="([^"]+)"/g))
+            if(m[1]&&!connections.find(c=>c.includes(m[1])))connections.push('Power Query: '+m[1]);
         }
       }catch(e){}
     }
 
-    // ---- Store state ----
+    // ---- Check for sensitive content ----
+    rawConnections=[...connections];
+    maskedConnections=connections.map(c=>maskSensitive(c));
+    const anySensitiveConn=connections.some(c=>hasSensitiveContent(c));
+    const anySensitiveNames=definedNames.some(d=>hasSensitiveContent(d.ref));
+    const anySensitive=anySensitiveConn||anySensitiveNames;
+
+    // Store state
     WB={sheetData,definedNames,tables,connections,fileName:file.name};
 
-    // ---- Render UI ----
+    // ---- Render ----
     document.getElementById('parsing').classList.remove('on');
     document.getElementById('fb').classList.add('on');
     document.getElementById('fn').textContent=file.name;
@@ -357,19 +452,32 @@ async function pf(file){
     if(connections.length){
       const sl=document.getElementById('sl');
       sl.innerHTML='';
-      connections.forEach(c=>{const row=mkRow(c);sl.appendChild(row)});
+      maskedConnections.forEach(c=>{sl.appendChild(mkRow(c))});
       document.getElementById('conn-atag').style.display='inline';
       document.getElementById('conn-wtag').style.display='inline';
       const note=document.getElementById('conn-note');
       note.style.display='block';
-      note.textContent=connections.length+' connection'+(connections.length>1?'s':'')+' detected. Review names and add any missing ones.';
+      note.textContent=connections.length+' connection'+(connections.length>1?'s':'')+' detected. Review and edit before building the prompt.';
     }
 
     if(definedNames.length){
       const nc=document.getElementById('names-container');
       nc.innerHTML='';
-      definedNames.forEach(d=>{nc.appendChild(mkRow(d.name+' refers to '+d.ref))});
+      definedNames.forEach(d=>nc.appendChild(mkRow(maskSensitive(d.name+' refers to '+d.ref))));
       document.getElementById('names-card').style.display='block';
+    }
+
+    // Show privacy warning if sensitive content found
+    if(anySensitive){
+      const warn=document.getElementById('privacy-warn');
+      warn.classList.add('on');
+      const details=[];
+      if(anySensitiveConn)details.push('Connection strings or URLs with server names, paths, or credentials');
+      if(anySensitiveNames)details.push('Named range references containing file paths or URLs');
+      document.getElementById('privacy-warn-detail').innerHTML=
+        '<ul>'+details.map(d=>'<li>'+d+'</li>').join('')+'</ul>';
+      if(anySensitiveConn)document.getElementById('conn-rtag').style.display='inline';
+      if(anySensitiveNames)document.getElementById('names-rtag').style.display='inline';
     }
 
   }catch(err){
@@ -380,12 +488,9 @@ async function pf(file){
   }
 }
 
-// ---- Render sheet list with collapsible content previews ----
 function renderSheets(sheetData){
   const c=document.getElementById('sc');
   c.innerHTML='';
-
-  // Checkboxes row
   const grid=document.createElement('div');grid.className='sgrid';
   sheetData.forEach((s,i)=>{
     const tag=document.createElement('div');tag.className='stag';
@@ -394,33 +499,23 @@ function renderSheets(sheetData){
   });
   c.appendChild(grid);
 
-  // Accordion for each sheet
   const accordion=document.createElement('div');accordion.className='sheet-detail';
   sheetData.forEach((s,i)=>{
-    if(!s.headers.length) return;
+    if(!s.headers.length)return;
     const wrap=document.createElement('div');wrap.className='sheet-row';
-
     const hdr=document.createElement('div');hdr.className='sheet-header';
-    const rowCount=s.records.length;
-    const colCount=s.headers.length;
-    hdr.innerHTML='<span>'+esc(s.name)+'<span style="color:var(--txh);font-weight:400;margin-left:8px">'+colCount+' columns, '+rowCount+' data rows</span></span><span class="chevron" id="chev'+i+'">&#9654;</span>';
+    hdr.innerHTML='<span>'+esc(s.name)+'<span style="color:var(--txh);font-weight:400;margin-left:8px">'+s.headers.length+' columns, '+s.records.length+' data rows</span></span><span class="chevron" id="chev'+i+'">&#9654;</span>';
     hdr.onclick=()=>toggleSheet(i);
-
     const body=document.createElement('div');body.className='sheet-body';body.id='sbody'+i;
-
-    // Columns list
     let html='<div style="margin-bottom:8px"><strong>Columns:</strong> '+s.headers.map(h=>'<code style="background:var(--bg-t);padding:1px 5px;border-radius:3px;font-size:11px">'+esc(h)+'</code>').join(' ')+'</div>';
-
-    // Sample rows table (up to 5 rows)
-    if(s.records.length>0){
+    if(s.records.length){
       html+='<div style="overflow-x:auto"><table><tr>'+s.headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr>';
       s.records.slice(0,5).forEach(row=>{
         html+='<tr>'+row.map(v=>'<td title="'+esc(v)+'">'+esc(v.length>30?v.substring(0,30)+'...':v)+'</td>').join('')+'</tr>';
       });
       html+='</table></div>';
-      if(s.records.length>5) html+='<div style="font-size:11px;color:var(--txh);margin-top:4px">Showing 5 of '+s.records.length+' rows</div>';
+      if(s.records.length>5)html+='<div style="font-size:11px;color:var(--txh);margin-top:4px">Showing 5 of '+s.records.length+' rows</div>';
     }
-
     body.innerHTML=html;
     wrap.appendChild(hdr);wrap.appendChild(body);
     accordion.appendChild(wrap);
@@ -429,13 +524,11 @@ function renderSheets(sheetData){
 }
 
 function toggleSheet(i){
-  const body=document.getElementById('sbody'+i);
-  const chev=document.getElementById('chev'+i);
+  const body=document.getElementById('sbody'+i),chev=document.getElementById('chev'+i);
   const open=body.classList.toggle('open');
   chev.classList.toggle('open',open);
 }
 
-// ---- Helpers ----
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function mkRow(val){
   const row=document.createElement('div');row.className='row';
@@ -444,10 +537,11 @@ function mkRow(val){
 }
 
 function clearFile(){
-  WB=null;fi.value='';
+  WB=null;rawConnections=[];maskedConnections=[];maskingActive=true;fi.value='';
   document.getElementById('fb').classList.remove('on');
+  document.getElementById('privacy-warn').classList.remove('on');
   dz.style.display='';
-  ['sheets-atag','sheets-wtag','conn-atag','conn-wtag'].forEach(id=>document.getElementById(id).style.display='none');
+  ['sheets-atag','sheets-wtag','conn-atag','conn-wtag','conn-rtag','names-rtag'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('names-card').style.display='none';
   document.getElementById('conn-note').style.display='none';
   document.getElementById('sc').innerHTML='<p class="em">Drop a file above to auto-detect sheets, or add manually.</p>';
@@ -488,96 +582,55 @@ function dr(btn){
 
 function gv(id){return Array.from(document.querySelectorAll('#'+id+' input[type=text]')).map(i=>i.value.trim()).filter(Boolean)}
 
-// ---- Build the prompt ----
 function build(){
-  const selectedSheets=gs();
-  const sources=gv('sl');
-  const extra=document.getElementById('ex').value.trim();
-  const namedRanges=gv('names-container');
-
+  const selectedSheets=gs(),sources=gv('sl'),extra=document.getElementById('ex').value.trim(),namedRanges=gv('names-container');
   if(!selectedSheets.length&&!sources.length&&!WB&&!extra){alert('Please add some information or drop a file first.');return}
 
-  let p='';
-
-  p+='You are writing a step-by-step user guide for DATA ANALYSTS on how to update and complete quality checks in an Excel workbook.\n\n';
+  let p='You are writing a step-by-step user guide for DATA ANALYSTS on how to update and complete quality checks in an Excel workbook.\n\n';
   p+='Below is the full structure and content extracted directly from the workbook. Use this to write specific, accurate instructions.\n\n';
   p+='=== WORKBOOK STRUCTURE ===\n\n';
 
-  // Sheet summary
-  if(selectedSheets.length){
-    p+='SHEETS INCLUDED:\n';
-    selectedSheets.forEach(s=>p+='  - '+s+'\n');
-    p+='\n';
-  }
+  if(selectedSheets.length){p+='SHEETS INCLUDED:\n';selectedSheets.forEach(s=>p+='  - '+s+'\n');p+='\n'}
 
-  // Full sheet content from parsed workbook
   if(WB&&WB.sheetData.length){
     p+='SHEET CONTENTS:\n\n';
     WB.sheetData.forEach(sheet=>{
-      if(!selectedSheets.includes(sheet.name)) return;
-      if(!sheet.headers.length) return;
+      if(!selectedSheets.includes(sheet.name)||!sheet.headers.length)return;
       p+='Sheet: "'+sheet.name+'"\n';
       p+='  Columns: '+sheet.headers.join(' | ')+'\n';
       if(sheet.records.length){
         p+='  Sample rows (first '+Math.min(5,sheet.records.length)+' of '+sheet.records.length+'):\n';
         sheet.records.slice(0,5).forEach((row,i)=>{
-          const pairs=sheet.headers.map((h,j)=>h+': '+( row[j]||'(blank)')).join('  |  ');
-          p+='    Row '+(i+1)+': '+pairs+'\n';
+          p+='    Row '+(i+1)+': '+sheet.headers.map((h,j)=>h+': '+(row[j]||'(blank)')).join('  |  ')+'\n';
         });
       }
       p+='\n';
     });
   }
 
-  // Tables
   if(WB&&WB.tables.length){
     p+='NAMED TABLES:\n';
-    WB.tables.forEach(t=>{
-      p+='  - Table "'+t.name+'"';
-      if(t.cols.length) p+=' with columns: '+t.cols.join(', ');
-      p+='\n';
-    });
+    WB.tables.forEach(t=>{p+='  - Table "'+t.name+'"';if(t.cols.length)p+=' with columns: '+t.cols.join(', ');p+='\n'});
     p+='\n';
   }
 
-  // Named ranges
-  if(WB&&WB.definedNames.length){
-    p+='NAMED RANGES / DEFINED NAMES:\n';
-    WB.definedNames.forEach(d=>p+='  - '+d.name+' = '+d.ref+'\n');
-    p+='\n';
-  } else if(namedRanges.length){
-    p+='NAMED RANGES:\n';
-    namedRanges.forEach(n=>p+='  - '+n+'\n');
-    p+='\n';
-  }
+  if(namedRanges.length){p+='NAMED RANGES:\n';namedRanges.forEach(n=>p+='  - '+n+'\n');p+='\n'}
 
-  // Connections
-  if(sources.length){
-    p+='EXTERNAL DATA SOURCES AND CONNECTIONS:\n';
-    sources.forEach((s,i)=>p+='  '+(i+1)+'. '+s+'\n');
-    p+='\n';
-  }
+  if(sources.length){p+='EXTERNAL DATA SOURCES AND CONNECTIONS:\n';sources.forEach((s,i)=>p+='  '+(i+1)+'. '+s+'\n');p+='\n'}
 
-  if(extra){
-    p+='ADDITIONAL CONTEXT FROM WORKBOOK OWNER:\n'+extra+'\n\n';
-  }
+  if(extra){p+='ADDITIONAL CONTEXT:\n'+extra+'\n\n'}
 
   p+='=== GUIDE REQUIREMENTS ===\n\n';
-  p+='Write the guide in these four sections. Use the exact sheet names, column names, table names, and connection names from the workbook structure above. Be specific -- reference actual column names and sheet names in every step.\n\n';
-  p+='1. UPDATING DATA LINKS\n';
-  p+='How to refresh all external links. For each link: which sheet or table it feeds, how to trigger the refresh, what a successful update looks like, and what a stale or failed link looks like and what to do.\n\n';
-  p+='2. REFRESHING EXTERNAL DATA SOURCES\n';
-  p+='For each source and connection listed above: how to trigger the refresh, how to confirm the correct data has loaded (use the column names and expected row counts from the sheet content above), what to check if data looks wrong.\n\n';
-  p+='3. DATA QUALITY CHECKS\n';
-  p+='For each check found in the workbook (use the check rows from the sheet content above): what it tests, what the expected value is, what a pass looks like (cell colour, value, flag), how to mark it as signed off, and what to do if it fails.\n\n';
-  p+='4. FINAL REVIEW BEFORE SIGN-OFF\n';
-  p+='How to confirm every check is marked, no blanks remain in key columns, named ranges show expected values, and the workbook is ready. Reference the specific sign-off cell or field from the workbook structure above if present.\n\n';
-  p+='Number every step. After each step leave a blank line with the text: [Screenshot]\n';
-  p+='Do not explain basic Excel actions. No introduction or closing summary. Start immediately with Section 1.';
+  p+='Write the guide in these four sections. Use the exact sheet names, column names, table names, and connection names from the workbook structure above. Reference actual column and sheet names in every step.\n\n';
+  p+='1. UPDATING DATA LINKS\nHow to refresh all external links. For each link: which sheet or table it feeds, how to trigger the refresh, what a successful update looks like, what a failed or stale link looks like, and what to do.\n\n';
+  p+='2. REFRESHING EXTERNAL DATA SOURCES\nFor each source and connection above: how to trigger the refresh, how to confirm the correct data has loaded (use the column names and row counts from the sheet content above), and what to check if data looks wrong.\n\n';
+  p+='3. DATA QUALITY CHECKS\nFor each check in the workbook (use the check rows from the sheet content above): what it tests, what the expected value is, what a pass looks like (cell colour, value, flag), how to mark it as signed off, and what to do if it fails.\n\n';
+  p+='4. FINAL REVIEW BEFORE SIGN-OFF\nHow to confirm every check is marked, no blanks remain in key columns, named ranges show expected values, and the workbook is ready. Reference the specific sign-off cell or field from the workbook structure above if present.\n\n';
+  p+='Number every step. After each step leave a blank line with the text: [Screenshot]\nDo not explain basic Excel actions. No introduction or closing summary. Start immediately with Section 1.';
 
   document.getElementById('pb').textContent=p;
-  const oa=document.getElementById('oa');
-  oa.classList.add('on');
+  const oa=document.getElementById('oa');oa.classList.add('on');
+  document.getElementById('prompt-warn').classList.add('on');
   oa.scrollIntoView({behavior:'smooth',block:'start'});
   const cb=document.getElementById('cb');cb.classList.remove('done');
   cb.innerHTML='<svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
