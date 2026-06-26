@@ -180,6 +180,3 @@ Pull requests welcome. The value of this tool is that it is a single self-contai
 
 MIT — free to use, modify, and share.
 
-## Licence
-
-MIT — free to use, modify, and share.
