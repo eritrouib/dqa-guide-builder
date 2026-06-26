@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>DQA User Guide Builder</title>
+<title>DQA Documentation Assistant</title>
 <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -32,22 +32,34 @@ h1{font-size:22px;font-weight:600;margin-bottom:4px}
 .sub{font-size:15px;color:var(--tx2);margin-bottom:1.5rem}
 .badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:var(--abg);color:var(--atx);margin-bottom:10px;letter-spacing:.03em}
 .safe{display:flex;align-items:center;gap:8px;background:var(--sbg);color:var(--stx);border-radius:var(--rs);padding:10px 14px;font-size:13px;font-weight:500;margin-bottom:1.5rem}
+
+/* Drop zone */
 .drop{border:1.5px dashed var(--bds);border-radius:var(--r);background:var(--bg);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:all .15s;margin-bottom:1rem}
 .drop:hover,.drop.over{border-color:#378ADD;background:var(--abg)}
 .drop input{display:none}
 .drop h3{font-size:15px;font-weight:500;margin-bottom:4px}
 .drop p{font-size:13px;color:var(--tx2)}
 .browse{color:#185FA5;text-decoration:underline;cursor:pointer}
+
+/* File bar */
 .fbar{display:none;align-items:center;gap:10px;background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:1rem}
 .fbar.on{display:flex}
 .fname{font-size:14px;font-weight:500;flex:1}
 .finfo{font-size:12px;color:var(--tx2)}
-.parsing{display:none;align-items:center;gap:10px;padding:12px 14px;background:var(--wbg);color:var(--wtx);border-radius:var(--rs);font-size:13px;margin-bottom:1rem}
-.parsing.on{display:flex}
-.spin{display:inline-block;width:14px;height:14px;border:2px solid var(--wtx);border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+
+/* Stepped parsing progress */
+.parsing-panel{display:none;background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1rem}
+.parsing-panel.on{display:block}
+.parsing-title{font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.pstep{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--txh);padding:3px 0;transition:color .2s}
+.pstep.done{color:var(--stx)}
+.pstep.active{color:var(--wtx)}
+.pstep.fail{color:var(--rtx)}
+.pstep-icon{width:16px;height:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Privacy warning banner */
+/* Privacy warning */
 .privacy-warn{display:none;align-items:flex-start;gap:10px;background:var(--rbg);color:var(--rtx);border-radius:var(--rs);padding:12px 14px;font-size:13px;margin-bottom:1rem;line-height:1.6}
 .privacy-warn.on{display:flex}
 .privacy-warn strong{font-weight:600}
@@ -56,17 +68,34 @@ h1{font-size:22px;font-weight:600;margin-bottom:4px}
 .mask-toggle{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;font-weight:600;cursor:pointer;padding:4px 10px;border-radius:20px;background:var(--rtx);color:#fff;border:none;font-family:inherit}
 .mask-toggle:hover{opacity:.85}
 
+/* Health panel */
+.health-panel{display:none;background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:1rem}
+.health-panel.on{display:block}
+.health-title{font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.health-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+@media(max-width:480px){.health-grid{grid-template-columns:1fr}}
+.hitem{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 10px;border-radius:var(--rs);background:var(--bg-s)}
+.hitem.green{background:var(--sbg);color:var(--stx)}
+.hitem.amber{background:var(--wbg);color:var(--wtx)}
+.hitem.red{background:var(--rbg);color:var(--rtx)}
+.hdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.hitem.green .hdot{background:var(--stx)}
+.hitem.amber .hdot{background:var(--wtx)}
+.hitem.red .hdot{background:var(--rtx)}
+
+/* Cards */
 .card{background:var(--bg);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;margin-bottom:1rem}
 .ctitle{font-size:12px;font-weight:600;color:var(--tx2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .atag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--sbg);color:var(--stx);letter-spacing:.03em}
 .wtag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--wbg);color:var(--wtx);letter-spacing:.03em}
 .rtag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;background:var(--rbg);color:var(--rtx);letter-spacing:.03em}
+.role-badge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:8px;background:var(--abg);color:var(--atx);margin-left:4px}
 
+/* Sheet grid + accordion */
 .sgrid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
 .stag{display:flex;align-items:center;gap:6px;background:var(--bg-s);border:.5px solid var(--bd);border-radius:20px;padding:5px 12px;font-size:13px}
 .stag input[type=checkbox]{accent-color:#185FA5;width:14px;height:14px;cursor:pointer}
 .stag label{cursor:pointer}
-
 .sheet-detail{margin-top:10px}
 .sheet-row{border:.5px solid var(--bd);border-radius:var(--rs);margin-bottom:6px;overflow:hidden}
 .sheet-header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;cursor:pointer;background:var(--bg-s);font-size:13px;font-weight:500;user-select:none}
@@ -79,19 +108,36 @@ h1{font-size:22px;font-weight:600;margin-bottom:4px}
 .sheet-body tr:last-child td{border-bottom:none}
 .chevron{transition:transform .2s;font-size:10px;color:var(--txh)}
 .chevron.open{transform:rotate(90deg)}
+.check-hint{font-size:11px;color:var(--stx);background:var(--sbg);border-radius:4px;padding:2px 7px;margin-top:6px;display:inline-block}
 
+/* Inputs */
 .row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
-input[type=text],textarea{width:100%;background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--rs);padding:9px 12px;font-size:14px;font-family:inherit;color:var(--tx);outline:none;transition:border-color .15s}
-input[type=text]:focus,textarea:focus{border-color:var(--bds)}
+input[type=text],textarea,select{width:100%;background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--rs);padding:9px 12px;font-size:14px;font-family:inherit;color:var(--tx);outline:none;transition:border-color .15s}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--bds)}
 input[type=text]::placeholder,textarea::placeholder{color:var(--txh)}
 textarea{resize:vertical;min-height:80px;line-height:1.5}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239c9b96' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
 .xbtn{background:none;border:none;cursor:pointer;color:var(--txh);font-size:20px;line-height:1;padding:0 2px;flex-shrink:0;transition:color .15s}
 .xbtn:hover{color:#E24B4A}
 .abtn{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--tx2);background:none;border:.5px dashed var(--bds);border-radius:var(--rs);padding:7px 12px;cursor:pointer;margin-top:4px;transition:all .15s;font-family:inherit}
 .abtn:hover{background:var(--bg-s);color:var(--tx)}
+
+/* Output type selector */
+.output-type-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+@media(max-width:480px){.output-type-row{grid-template-columns:1fr}}
+.otype{border:.5px solid var(--bd);border-radius:var(--rs);padding:10px 12px;cursor:pointer;transition:all .15s;background:var(--bg)}
+.otype:hover{border-color:var(--bds);background:var(--bg-s)}
+.otype.selected{border-color:#185FA5;background:var(--abg)}
+.otype-title{font-size:13px;font-weight:500;margin-bottom:2px}
+.otype-desc{font-size:11px;color:var(--tx2)}
+.otype.selected .otype-desc{color:var(--atx)}
+
+/* Generate button */
 .gbtn{width:100%;padding:13px;background:var(--tx);color:var(--bg);border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s;margin-top:.5rem}
 .gbtn:hover{opacity:.85}
 .gbtn:active{transform:scale(.99)}
+
+/* Output */
 .out{display:none;margin-top:1.5rem}
 .out.on{display:block}
 .oh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
@@ -99,11 +145,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
 .cbtn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:6px 14px;background:var(--bg);color:var(--tx);border:.5px solid var(--bds);border-radius:var(--rs);cursor:pointer;font-family:inherit;transition:all .15s}
 .cbtn:hover{background:var(--bg-s)}
 .cbtn.done{background:var(--sbg);color:var(--stx);border-color:transparent}
-
-/* Prompt warning above pbox */
 .prompt-warn{display:none;align-items:flex-start;gap:8px;background:var(--wbg);color:var(--wtx);border-radius:var(--rs);padding:10px 14px;font-size:13px;margin-bottom:10px;line-height:1.6}
 .prompt-warn.on{display:flex}
-
 .pbox{background:var(--bg-s);border:.5px solid var(--bd);border-radius:var(--r);padding:1.25rem;font-size:13px;line-height:1.7;color:var(--tx);white-space:pre-wrap;word-break:break-word;max-height:500px;overflow-y:auto}
 .hint-box{margin-top:1rem;background:var(--abg);border-radius:var(--rs);padding:12px 14px;font-size:13px;color:var(--atx);line-height:1.6}
 .hint-box strong{font-weight:600}
@@ -116,21 +159,21 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
 <body>
 <div class="wrap">
   <div class="badge">Data Quality Assurance</div>
-  <h1>DQA user guide builder</h1>
-  <p class="sub">Drop your Excel file in. It is read entirely in your browser and never uploaded. The tool extracts your sheet contents, tables, checks, named ranges, and connections, then builds a tailored prompt for any AI.</p>
+  <h1>DQA documentation assistant</h1>
+  <p class="sub">Drop your Excel workbook in. It is read entirely in your browser and never uploaded. The tool understands your workbook structure and generates ready-to-use documentation for analysts.</p>
 
   <div class="safe">
     <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
     100% local. Your file never leaves your computer.
   </div>
 
-  <!-- Privacy warning: shown when sensitive links detected -->
+  <!-- Privacy warning -->
   <div class="privacy-warn" id="privacy-warn">
     <svg class="ic" style="flex-shrink:0;margin-top:2px" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     <div>
-      <strong>Sensitive content detected in connections or links.</strong>
+      <strong>Sensitive content detected and masked.</strong>
       <div id="privacy-warn-detail" style="margin-top:4px"></div>
-      <div style="margin-top:8px">Sensitive values have been automatically masked below. <strong>Review every field before copying the prompt</strong> and remove or edit anything you do not want to send to an external AI.</div>
+      <div style="margin-top:6px">Review every field below before generating. Edit or delete anything you do not want sent to an external AI.</div>
       <button class="mask-toggle" id="mask-toggle-btn" onclick="toggleMask()">
         <svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         Show original values
@@ -138,6 +181,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
     </div>
   </div>
 
+  <!-- Drop zone -->
   <div class="drop" id="dz" onclick="document.getElementById('fi').click()">
     <input type="file" id="fi" accept=".xlsx,.xlsm"/>
     <svg style="width:40px;height:40px;stroke:var(--txh);stroke-width:1.5;fill:none;stroke-linecap:round;stroke-linejoin:round;display:block;margin:0 auto 12px" viewBox="0 0 24 24">
@@ -145,16 +189,32 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
       <polyline points="14 2 14 8 20 8"/>
       <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
     </svg>
-    <h3>Drop your Excel file here</h3>
+    <h3>Drop your Excel workbook here</h3>
     <p>or <span class="browse">browse to select it</span> &nbsp;&middot;&nbsp; .xlsx / .xlsm</p>
   </div>
 
-  <div class="parsing" id="parsing"><span class="spin"></span> Reading workbook structure and content...</div>
+  <!-- Stepped parsing progress -->
+  <div class="parsing-panel" id="parsing-panel">
+    <div class="parsing-title">Reading workbook</div>
+    <div class="pstep" id="ps-sheets"><div class="pstep-icon">&#9679;</div>Reading sheets and cell content</div>
+    <div class="pstep" id="ps-tables"><div class="pstep-icon">&#9679;</div>Detecting named tables</div>
+    <div class="pstep" id="ps-conn"><div class="pstep-icon">&#9679;</div>Reading connections and Power Query</div>
+    <div class="pstep" id="ps-names"><div class="pstep-icon">&#9679;</div>Reading named ranges</div>
+    <div class="pstep" id="ps-checks"><div class="pstep-icon">&#9679;</div>Detecting validation checks</div>
+    <div class="pstep" id="ps-mask"><div class="pstep-icon">&#9679;</div>Scanning for sensitive data</div>
+  </div>
 
+  <!-- File loaded bar -->
   <div class="fbar" id="fb">
     <svg class="ic" style="width:20px;height:20px;color:var(--stx)" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
     <div style="flex:1"><div class="fname" id="fn"></div><div class="finfo" id="fi2"></div></div>
     <button class="xbtn" onclick="clearFile()">&times;</button>
+  </div>
+
+  <!-- Workbook health panel -->
+  <div class="health-panel" id="health-panel">
+    <div class="health-title">Workbook health</div>
+    <div class="health-grid" id="health-grid"></div>
   </div>
 
   <!-- SHEETS -->
@@ -162,7 +222,7 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
     <div class="ctitle">
       Sheets
       <span class="atag" id="sheets-atag" style="display:none">auto-detected</span>
-      <span class="wtag" id="sheets-wtag" style="display:none">expand to review content</span>
+      <span class="wtag" id="sheets-wtag" style="display:none">expand to review</span>
     </div>
     <div id="sc"><p class="em">Drop a file above to auto-detect sheets, or add manually.</p></div>
     <button class="abtn" onclick="addManualSheet()">
@@ -188,103 +248,168 @@ textarea{resize:vertical;min-height:80px;line-height:1.5}
   <!-- NAMED RANGES -->
   <div class="card" id="names-card" style="display:none">
     <div class="ctitle">
-      Named ranges and defined names
+      Named ranges
       <span class="atag">auto-detected</span>
       <span class="rtag" id="names-rtag" style="display:none">sensitive values masked</span>
     </div>
     <div id="names-container"></div>
   </div>
 
-  <!-- EXTRA -->
+  <!-- EXTRA CONTEXT -->
   <div class="card">
-    <div class="ctitle">Anything else to include</div>
-    <textarea id="ex" placeholder="e.g. Cell colours: green = check passed, red = failed. Links must be updated before refreshing sources. Sign-off goes in cell B2 on the Summary sheet."></textarea>
+    <div class="ctitle">Additional context</div>
+    <textarea id="ex" placeholder="e.g. Cell colours: green = check passed, red = failed. Sign-off goes in cell B2 on the Summary sheet. Links must be refreshed before Power Query."></textarea>
+  </div>
+
+  <!-- OUTPUT TYPE -->
+  <div class="card">
+    <div class="ctitle">Document type</div>
+    <div class="output-type-row" id="otype-row">
+      <div class="otype selected" onclick="selectType(this,'guide')" data-type="guide">
+        <div class="otype-title">User Guide</div>
+        <div class="otype-desc">Step-by-step for analysts who run the process</div>
+      </div>
+      <div class="otype" onclick="selectType(this,'sop')" data-type="sop">
+        <div class="otype-title">SOP</div>
+        <div class="otype-desc">Formal standard operating procedure with owner and purpose</div>
+      </div>
+      <div class="otype" onclick="selectType(this,'quickref')" data-type="quickref">
+        <div class="otype-title">Quick Reference</div>
+        <div class="otype-desc">One-page checklist for experienced analysts</div>
+      </div>
+      <div class="otype" onclick="selectType(this,'training')" data-type="training">
+        <div class="otype-title">Training Guide</div>
+        <div class="otype-desc">Onboarding document for someone new to this workbook</div>
+      </div>
+    </div>
   </div>
 
   <button class="gbtn" onclick="build()">
-    <svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-    Build my prompt
+    <svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+    Generate user guide
   </button>
 
   <div class="out" id="oa">
     <div class="div"></div>
     <div class="oh">
-      <span class="ol">Your prompt</span>
+      <span class="ol" id="out-label">Your user guide prompt</span>
       <button class="cbtn" id="cb" onclick="cp()">
         <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
       </button>
     </div>
-    <div class="prompt-warn" id="prompt-warn">
+    <div class="prompt-warn on">
       <svg class="ic" style="flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span><strong>Review before copying.</strong> This prompt was built from your workbook content. Check it does not contain sensitive server names, file paths, or URLs you do not want to send to an external AI. Edit the fields above and rebuild if needed.</span>
+      <span><strong>Review before copying.</strong> Check this does not contain server names, file paths, or data you do not want to send to an external AI. Edit the fields above and regenerate if needed.</span>
     </div>
     <div class="pbox" id="pb"></div>
     <div class="hint-box">
-      <strong>Where to paste this:</strong> Claude (claude.ai) gives the best results. Also works with ChatGPT and Copilot at copilot.microsoft.com. Avoid the Copilot sidebar in Excel as it has a short input limit and will cut off long prompts.
+      <strong>Paste this into:</strong> Claude (claude.ai) for best results. Also works with ChatGPT and Copilot at copilot.microsoft.com. Avoid the Copilot sidebar in Excel as it truncates long prompts.
     </div>
   </div>
 </div>
 
 <script>
 // ---- state ----
-let WB = null;
-let maskingActive = true;
-let rawConnections = [];  // original unmasked values
-let maskedConnections = []; // masked values
+let WB=null, maskingActive=true, rawConnections=[], maskedConnections=[], selectedDocType='guide';
 
-// ---- sensitive data masking ----
-function maskSensitive(s) {
-  let out = s;
-  // SharePoint URLs
-  out = out.replace(/https?:\/\/[a-zA-Z0-9\-]+\.sharepoint\.com[^\s))]*/g, '[SharePoint URL redacted]');
-  // All other http/https URLs
-  out = out.replace(/https?:\/\/[a-zA-Z0-9\-\.]+[^\s);,)]*/g, '[URL redacted]');
-  // jdbc and other DB protocols
-  out = out.replace(/jdbc:[^\s;,)]*/gi, '[DB connection redacted]');
-  // UNC paths \\server\share
-  out = out.replace(/\\\\[a-zA-Z0-9\-\.]+\\[^\s;,)]*/g, '[Network path redacted]');
-  // Windows paths C:\ or C:/
-  out = out.replace(/[A-Za-z]:[/\\][^\s;,)]*/g, '[Local path redacted]');
-  // IP addresses
-  out = out.replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, '[IP redacted]');
-  // SQL/ODBC connection string key=value pairs
-  out = out.replace(/(Server|Data Source|DataSource|DSN|Initial Catalog|Database|Uid|User ID|Pwd|Password|PWD|UID|Host|Hostname)=([^;),\s]+)/gi,
-    (m, key) => key + '=[redacted]');
-  return out;
+// ---- output type ----
+function selectType(el,type){
+  document.querySelectorAll('.otype').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDocType=type;
+  const labels={guide:'Your user guide prompt',sop:'Your SOP prompt',quickref:'Your quick reference prompt',training:'Your training guide prompt'};
+  const btnLabels={guide:'Generate user guide',sop:'Generate SOP',quickref:'Generate quick reference',training:'Generate training guide'};
+  document.querySelector('.gbtn').innerHTML='<svg class="ic" style="width:18px;height:18px" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> '+btnLabels[type];
+  document.getElementById('out-label').textContent=labels[type]||'Your prompt';
 }
 
-function hasSensitiveContent(s) {
-  return s !== maskSensitive(s);
+// ---- sensitive masking ----
+function maskSensitive(s){
+  let o=s;
+  o=o.replace(/https?:\/\/[a-zA-Z0-9\-]+\.sharepoint\.com[^\s)]*/g,'[SharePoint URL redacted]');
+  o=o.replace(/https?:\/\/[a-zA-Z0-9\-\.]+[^\s);,]*/g,'[URL redacted]');
+  o=o.replace(/jdbc:[^\s;,)]*/gi,'[DB connection redacted]');
+  o=o.replace(/\\\\[a-zA-Z0-9\-\.]+\\[^\s;,)]*/g,'[Network path redacted]');
+  o=o.replace(/[A-Za-z]:[/\\][^\s;,)]*/g,'[Local path redacted]');
+  o=o.replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g,'[IP redacted]');
+  o=o.replace(/(Server|Data Source|DataSource|DSN|Initial Catalog|Database|Uid|User ID|Pwd|Password|PWD|UID|Host|Hostname)=([^;),\s]+)/gi,(m,k)=>k+'=[redacted]');
+  return o;
 }
+function isSensitive(s){return s!==maskSensitive(s)}
 
-function toggleMask() {
-  maskingActive = !maskingActive;
-  const btn = document.getElementById('mask-toggle-btn');
-  const sl = document.getElementById('sl');
-  const nc = document.getElementById('names-container');
-
-  // Update connections fields
-  const connInputs = sl.querySelectorAll('input[type=text]');
-  connInputs.forEach((inp, i) => {
-    const raw = rawConnections[i];
-    if (raw !== undefined) inp.value = maskingActive ? maskedConnections[i] : raw;
+function toggleMask(){
+  maskingActive=!maskingActive;
+  const btn=document.getElementById('mask-toggle-btn');
+  document.querySelectorAll('#sl input[type=text]').forEach((inp,i)=>{
+    if(rawConnections[i]!==undefined)inp.value=maskingActive?maskedConnections[i]:rawConnections[i];
   });
-
-  // Update named range fields
-  if (WB && WB.definedNames.length) {
-    const nameInputs = nc.querySelectorAll('input[type=text]');
-    nameInputs.forEach((inp, i) => {
-      const dn = WB.definedNames[i];
-      if (dn) {
-        const raw = dn.name + ' refers to ' + dn.ref;
-        inp.value = maskingActive ? maskSensitive(raw) : raw;
-      }
+  if(WB&&WB.definedNames.length){
+    document.querySelectorAll('#names-container input[type=text]').forEach((inp,i)=>{
+      const d=WB.definedNames[i];
+      if(d){const raw=d.name+' refers to '+d.ref;inp.value=maskingActive?maskSensitive(raw):raw}
     });
   }
+  btn.innerHTML=maskingActive
+    ?'<svg style="width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Show original values'
+    :'<svg style="width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide original values';
+}
 
-  btn.innerHTML = maskingActive
-    ? '<svg style="width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Show original values'
-    : '<svg style="width:13px;height:13px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> Hide original values';
+// ---- infer sheet role from name and content ----
+function inferRole(name, headers){
+  const n=name.toLowerCase();
+  const h=(headers||[]).join(' ').toLowerCase();
+  if(/check|dqa|validat|qa|qualit/.test(n)||/pass.fail|expected|actual|check name|check result/.test(h)) return 'Checks';
+  if(/summar|overview|dashboard|kpi/.test(n)||/total|count|status|sign.?off/.test(h)) return 'Summary';
+  if(/raw|source|import|data|extract|staging/.test(n)) return 'Raw Data';
+  if(/lookup|ref|reference|list|config|param/.test(n)) return 'Lookup';
+  if(/archive|hist|log|audit/.test(n)) return 'Archive';
+  if(/pivot|report/.test(n)) return 'Report';
+  return null;
+}
+
+// ---- detect check patterns in sheet rows ----
+function detectChecks(sheet){
+  const checkValues=['pass','fail','true','false','ok','error','yes','no','valid','invalid','complete','incomplete'];
+  const checkHeaders=['pass/fail','pass fail','status','result','check','flag','expected','actual','threshold','variance','outcome','verified','signed off'];
+  const h=(sheet.headers||[]).map(x=>x.toLowerCase());
+  const hasCheckHeader=h.some(hdr=>checkHeaders.some(ch=>hdr.includes(ch)));
+  const checkRows=[];
+  if(hasCheckHeader&&sheet.records){
+    sheet.records.slice(0,60).forEach(row=>{
+      const firstCol=row[0]||'';
+      if(firstCol&&firstCol.length>2&&firstCol.length<100) checkRows.push(firstCol);
+    });
+  }
+  // Also scan all cell values for pass/fail patterns
+  let hasPassFail=false;
+  if(sheet.records){
+    outer: for(const row of sheet.records.slice(0,30)){
+      for(const cell of row){
+        if(checkValues.includes((cell||'').toLowerCase().trim())){hasPassFail=true;break outer}
+      }
+    }
+  }
+  return {hasCheckHeader,hasPassFail,checkRows};
+}
+
+// ---- stepped progress ----
+function stepDone(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.remove('active');el.classList.add('done');
+  el.querySelector('.pstep-icon').innerHTML='<svg style="width:14px;height:14px;stroke:var(--stx);stroke-width:2.5;fill:none" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+}
+function stepActive(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add('active');
+  el.querySelector('.pstep-icon').innerHTML='<span class="spin"></span>';
+}
+function stepFail(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add('fail');
+  el.querySelector('.pstep-icon').innerHTML='<svg style="width:14px;height:14px;stroke:var(--rtx);stroke-width:2.5;fill:none" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 }
 
 // ---- drag and drop ----
@@ -324,66 +449,55 @@ function readSheet(xml,ss,maxRows=60){
 function rowsToRecords(rows){
   if(!rows.length)return{headers:[],records:[]};
   const headerRow=rows[0],cols=Object.keys(headerRow).sort();
-  const headers=cols.map(c=>headerRow[c]);
-  const records=rows.slice(1).map(row=>cols.map(c=>row[c]||''));
-  return{headers,records};
+  return{headers:cols.map(c=>headerRow[c]),records:rows.slice(1).map(row=>cols.map(c=>row[c]||''))};
 }
 
+// ---- main parser ----
 async function pf(file){
   if(!file.name.match(/\.(xlsx|xlsm)$/i)){alert('Please select an .xlsx or .xlsm file');return}
-  document.getElementById('parsing').classList.add('on');
   dz.style.display='none';
+  document.getElementById('parsing-panel').classList.add('on');
   maskingActive=true;
 
   try{
     const zip=await JSZip.loadAsync(await file.arrayBuffer());
 
-    // Shared strings
+    // Step 1: sheets + content
+    stepActive('ps-sheets');
     const ss=[];
     const ssf=zip.file('xl/sharedStrings.xml');
     if(ssf){
       const doc=px(await ssf.async('text'));
-      for(const si of tags(doc,'si'))
-        ss.push(Array.from(si.getElementsByTagNameNS('*','t')).map(t=>t.textContent||'').join(''));
+      for(const si of tags(doc,'si'))ss.push(Array.from(si.getElementsByTagNameNS('*','t')).map(t=>t.textContent||'').join(''));
     }
-
-    // Sheet names + rIds
     const wbXml=await zip.file('xl/workbook.xml').async('text');
     const wbDoc=px(wbXml);
     const sheetEls=tags(wbDoc,'sheet');
     const sheetNames=sheetEls.map(s=>at(s,'name')).filter(Boolean);
     const sheetRids=sheetEls.map(s=>at(s,'r:id')||s.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id')||'');
-
-    // Rels -> paths
     const wbRels=px(await zip.file('xl/_rels/workbook.xml.rels').async('text'));
     const ridToPath={};
     for(const rel of tags(wbRels,'Relationship')){
       const id=at(rel,'Id'),tgt=at(rel,'Target');
       ridToPath[id]='xl/'+tgt.replace(/^\.\.\//,'').replace(/^xl\//,'');
     }
-
-    // Read sheets
     const sheetData=[];
     for(let i=0;i<sheetNames.length;i++){
       const rid=sheetRids[i];
       let path=ridToPath[rid]||`xl/worksheets/sheet${i+1}.xml`;
       if(!path.startsWith('xl/'))path='xl/'+path;
       const sf=zip.file(path);
-      if(!sf){sheetData.push({name:sheetNames[i],rows:[],headers:[],records:[]});continue}
+      if(!sf){sheetData.push({name:sheetNames[i],rows:[],headers:[],records:[],role:null,checkInfo:{}});continue}
       const rows=readSheet(await sf.async('text'),ss,60);
       const{headers,records}=rowsToRecords(rows);
-      sheetData.push({name:sheetNames[i],rows,headers,records});
+      const role=inferRole(sheetNames[i],headers);
+      const checkInfo=detectChecks({headers,records});
+      sheetData.push({name:sheetNames[i],rows,headers,records,role,checkInfo});
     }
+    stepDone('ps-sheets');
 
-    // Named ranges
-    const definedNames=[];
-    for(const dn of tags(wbDoc,'definedName')){
-      const name=at(dn,'name'),val=dn.textContent||'';
-      if(name&&!name.startsWith('_xlnm')&&!name.includes('Print_')&&!name.includes('_FilterDatabase'))
-        definedNames.push({name,ref:val});
-    }
-
-    // Tables
+    // Step 2: tables
+    stepActive('ps-tables');
     const tables=[];
     for(const path of Object.keys(zip.files)){
       if(!path.startsWith('xl/tables/')||!path.endsWith('.xml'))continue;
@@ -397,8 +511,10 @@ async function pf(file){
         }
       }catch(e){}
     }
+    stepDone('ps-tables');
 
-    // Connections / Power Query
+    // Step 3: connections
+    stepActive('ps-conn');
     const connections=[];
     const connf=zip.file('xl/connections.xml');
     if(connf){
@@ -423,78 +539,125 @@ async function pf(file){
         }
       }catch(e){}
     }
+    stepDone('ps-conn');
 
-    // ---- Check for sensitive content ----
+    // Step 4: named ranges
+    stepActive('ps-names');
+    const definedNames=[];
+    for(const dn of tags(wbDoc,'definedName')){
+      const name=at(dn,'name'),val=dn.textContent||'';
+      if(name&&!name.startsWith('_xlnm')&&!name.includes('Print_')&&!name.includes('_FilterDatabase'))
+        definedNames.push({name,ref:val});
+    }
+    stepDone('ps-names');
+
+    // Step 5: check detection (already done per sheet, just mark step)
+    stepActive('ps-checks');
+    const checkSheets=sheetData.filter(s=>s.checkInfo&&(s.checkInfo.hasCheckHeader||s.checkInfo.hasPassFail||s.role==='Checks'));
+    await new Promise(r=>setTimeout(r,100)); // small delay so user sees the step
+    stepDone('ps-checks');
+
+    // Step 6: masking
+    stepActive('ps-mask');
     rawConnections=[...connections];
     maskedConnections=connections.map(c=>maskSensitive(c));
-    const anySensitiveConn=connections.some(c=>hasSensitiveContent(c));
-    const anySensitiveNames=definedNames.some(d=>hasSensitiveContent(d.ref));
+    const anySensitiveConn=connections.some(c=>isSensitive(c));
+    const anySensitiveNames=definedNames.some(d=>isSensitive(d.ref));
     const anySensitive=anySensitiveConn||anySensitiveNames;
+    await new Promise(r=>setTimeout(r,80));
+    stepDone('ps-mask');
 
-    // Store state
-    WB={sheetData,definedNames,tables,connections,fileName:file.name};
+    // Store
+    WB={sheetData,definedNames,tables,connections,checkSheets,fileName:file.name};
 
-    // ---- Render ----
-    document.getElementById('parsing').classList.remove('on');
-    document.getElementById('fb').classList.add('on');
+    // Hide parsing, show file bar
+    setTimeout(()=>{
+      document.getElementById('parsing-panel').classList.remove('on');
+      document.getElementById('fb').classList.add('on');
+    },400);
+
     document.getElementById('fn').textContent=file.name;
     document.getElementById('fi2').textContent=
       sheetNames.length+' sheets  \u00b7  '+
       (tables.length?tables.length+' tables  \u00b7  ':'')+
       (connections.length?connections.length+' connection'+(connections.length>1?'s':'')+' \u00b7  ':'')+
       (definedNames.length?definedNames.length+' named ranges  \u00b7  ':'')+
+      (checkSheets.length?checkSheets.length+' check sheet'+(checkSheets.length>1?'s':'')+' detected  \u00b7  ':'')+
       (file.size/1024).toFixed(0)+' KB';
 
+    // Health panel
+    renderHealth(sheetData,tables,connections,definedNames,checkSheets);
+
+    // Sheets
     renderSheets(sheetData);
     document.getElementById('sheets-atag').style.display='inline';
     document.getElementById('sheets-wtag').style.display='inline';
 
+    // Connections
     if(connections.length){
-      const sl=document.getElementById('sl');
-      sl.innerHTML='';
+      const sl=document.getElementById('sl');sl.innerHTML='';
       maskedConnections.forEach(c=>{sl.appendChild(mkRow(c))});
       document.getElementById('conn-atag').style.display='inline';
       document.getElementById('conn-wtag').style.display='inline';
       const note=document.getElementById('conn-note');
       note.style.display='block';
-      note.textContent=connections.length+' connection'+(connections.length>1?'s':'')+' detected. Review and edit before building the prompt.';
+      note.textContent=connections.length+' connection'+(connections.length>1?'s':'')+' detected. Review and edit before generating.';
     }
 
+    // Named ranges
     if(definedNames.length){
-      const nc=document.getElementById('names-container');
-      nc.innerHTML='';
+      const nc=document.getElementById('names-container');nc.innerHTML='';
       definedNames.forEach(d=>nc.appendChild(mkRow(maskSensitive(d.name+' refers to '+d.ref))));
       document.getElementById('names-card').style.display='block';
     }
 
-    // Show privacy warning if sensitive content found
+    // Privacy warning
     if(anySensitive){
-      const warn=document.getElementById('privacy-warn');
-      warn.classList.add('on');
+      document.getElementById('privacy-warn').classList.add('on');
       const details=[];
-      if(anySensitiveConn)details.push('Connection strings or URLs with server names, paths, or credentials');
+      if(anySensitiveConn)details.push('Connection strings containing server names, paths or credentials');
       if(anySensitiveNames)details.push('Named range references containing file paths or URLs');
-      document.getElementById('privacy-warn-detail').innerHTML=
-        '<ul>'+details.map(d=>'<li>'+d+'</li>').join('')+'</ul>';
+      document.getElementById('privacy-warn-detail').innerHTML='<ul>'+details.map(d=>'<li>'+d+'</li>').join('')+'</ul>';
       if(anySensitiveConn)document.getElementById('conn-rtag').style.display='inline';
       if(anySensitiveNames)document.getElementById('names-rtag').style.display='inline';
     }
 
   }catch(err){
-    document.getElementById('parsing').classList.remove('on');
+    document.getElementById('parsing-panel').classList.remove('on');
     dz.style.display='';
     console.error(err);
     alert('Could not read this file. Make sure it is a valid .xlsx or .xlsm workbook.\n\n'+err.message);
   }
 }
 
+// ---- health panel ----
+function renderHealth(sheetData,tables,connections,definedNames,checkSheets){
+  const grid=document.getElementById('health-grid');
+  grid.innerHTML='';
+  const items=[
+    {label:sheetData.length+' sheet'+(sheetData.length!==1?'s':'')+' detected', status:'green'},
+    {label:tables.length?tables.length+' named table'+(tables.length!==1?'s':'')+' detected':'No named tables found', status:tables.length?'green':'amber'},
+    {label:connections.length?connections.length+' data connection'+(connections.length!==1?'s':'')+' detected':'No connections detected', status:connections.length?'green':'amber'},
+    {label:definedNames.length?definedNames.length+' named range'+(definedNames.length!==1?'s':'')+' detected':'No named ranges found', status:definedNames.length?'green':'amber'},
+    {label:checkSheets.length?checkSheets.length+' check sheet'+(checkSheets.length!==1?'s':'')+' identified':'No check sheet identified', status:checkSheets.length?'green':'red'},
+    {label:(()=>{const s=sheetData.find(x=>x.role==='Summary');return s?'Summary sheet found: "'+s.name+'"':'No summary sheet identified'})(), status:sheetData.some(x=>x.role==='Summary')?'green':'amber'},
+  ];
+  items.forEach(item=>{
+    const div=document.createElement('div');div.className='hitem '+item.status;
+    div.innerHTML='<div class="hdot"></div><span>'+esc(item.label)+'</span>';
+    grid.appendChild(div);
+  });
+  document.getElementById('health-panel').classList.add('on');
+}
+
+// ---- render sheets ----
 function renderSheets(sheetData){
-  const c=document.getElementById('sc');
-  c.innerHTML='';
+  const c=document.getElementById('sc');c.innerHTML='';
   const grid=document.createElement('div');grid.className='sgrid';
   sheetData.forEach((s,i)=>{
     const tag=document.createElement('div');tag.className='stag';
-    tag.innerHTML='<input type="checkbox" id="sh'+i+'" checked><label for="sh'+i+'">'+esc(s.name)+'</label>';
+    const roleHtml=s.role?'<span class="role-badge">'+esc(s.role)+'</span>':'';
+    tag.innerHTML='<input type="checkbox" id="sh'+i+'" checked><label for="sh'+i+'">'+esc(s.name)+'</label>'+roleHtml;
     grid.appendChild(tag);
   });
   c.appendChild(grid);
@@ -504,7 +667,8 @@ function renderSheets(sheetData){
     if(!s.headers.length)return;
     const wrap=document.createElement('div');wrap.className='sheet-row';
     const hdr=document.createElement('div');hdr.className='sheet-header';
-    hdr.innerHTML='<span>'+esc(s.name)+'<span style="color:var(--txh);font-weight:400;margin-left:8px">'+s.headers.length+' columns, '+s.records.length+' data rows</span></span><span class="chevron" id="chev'+i+'">&#9654;</span>';
+    const roleLabel=s.role?' <span style="font-size:10px;font-weight:400;color:var(--atx);background:var(--abg);padding:1px 6px;border-radius:8px;margin-left:4px">'+esc(s.role)+'</span>':'';
+    hdr.innerHTML='<span>'+esc(s.name)+roleLabel+'<span style="color:var(--txh);font-weight:400;margin-left:8px">'+s.headers.length+' cols, '+s.records.length+' rows</span></span><span class="chevron" id="chev'+i+'">&#9654;</span>';
     hdr.onclick=()=>toggleSheet(i);
     const body=document.createElement('div');body.className='sheet-body';body.id='sbody'+i;
     let html='<div style="margin-bottom:8px"><strong>Columns:</strong> '+s.headers.map(h=>'<code style="background:var(--bg-t);padding:1px 5px;border-radius:3px;font-size:11px">'+esc(h)+'</code>').join(' ')+'</div>';
@@ -516,6 +680,9 @@ function renderSheets(sheetData){
       html+='</table></div>';
       if(s.records.length>5)html+='<div style="font-size:11px;color:var(--txh);margin-top:4px">Showing 5 of '+s.records.length+' rows</div>';
     }
+    if(s.checkInfo&&(s.checkInfo.hasCheckHeader||s.checkInfo.hasPassFail)){
+      html+='<div class="check-hint">&#10003; Validation checks detected in this sheet</div>';
+    }
     body.innerHTML=html;
     wrap.appendChild(hdr);wrap.appendChild(body);
     accordion.appendChild(wrap);
@@ -525,29 +692,29 @@ function renderSheets(sheetData){
 
 function toggleSheet(i){
   const body=document.getElementById('sbody'+i),chev=document.getElementById('chev'+i);
-  const open=body.classList.toggle('open');
-  chev.classList.toggle('open',open);
+  const open=body.classList.toggle('open');chev.classList.toggle('open',open);
 }
 
+// ---- helpers ----
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function mkRow(val){
   const row=document.createElement('div');row.className='row';
   row.innerHTML='<input type="text" value="'+esc(val)+'"/><button class="xbtn" onclick="dr(this)">&times;</button>';
   return row;
 }
-
 function clearFile(){
   WB=null;rawConnections=[];maskedConnections=[];maskingActive=true;fi.value='';
   document.getElementById('fb').classList.remove('on');
   document.getElementById('privacy-warn').classList.remove('on');
+  document.getElementById('health-panel').classList.remove('on');
   dz.style.display='';
   ['sheets-atag','sheets-wtag','conn-atag','conn-wtag','conn-rtag','names-rtag'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('names-card').style.display='none';
   document.getElementById('conn-note').style.display='none';
   document.getElementById('sc').innerHTML='<p class="em">Drop a file above to auto-detect sheets, or add manually.</p>';
   document.getElementById('sl').innerHTML='<div class="row"><input type="text" placeholder="e.g. SharePoint list, SQL table, Power Query connection"/><button class="xbtn" onclick="dr(this)">&times;</button></div>';
+  document.getElementById('oa').classList.remove('on');
 }
-
 function addManualSheet(){
   const c=document.getElementById('sc');
   let g=c.querySelector('.sgrid');
@@ -557,7 +724,6 @@ function addManualSheet(){
   const d=document.createElement('button');d.className='xbtn';d.innerHTML='&times;';d.style.fontSize='16px';d.onclick=()=>tag.remove();
   tag.appendChild(inp);tag.appendChild(d);g.appendChild(tag);inp.focus();
 }
-
 function gs(){
   const res=[];
   document.querySelectorAll('#sc .stag').forEach(t=>{
@@ -567,70 +733,144 @@ function gs(){
   });
   return res;
 }
-
 function ar(id,ph){
   const l=document.getElementById(id),r=document.createElement('div');
   r.className='row';r.innerHTML='<input type="text" placeholder="'+ph+'"><button class="xbtn" onclick="dr(this)">&times;</button>';
   l.appendChild(r);r.querySelector('input').focus();
 }
-
 function dr(btn){
   const p=btn.closest('[id]');
   if(p&&p.querySelectorAll&&p.querySelectorAll('.row').length===1)return;
   btn.parentElement.remove();
 }
-
 function gv(id){return Array.from(document.querySelectorAll('#'+id+' input[type=text]')).map(i=>i.value.trim()).filter(Boolean)}
 
+// ---- build prompt ----
 function build(){
   const selectedSheets=gs(),sources=gv('sl'),extra=document.getElementById('ex').value.trim(),namedRanges=gv('names-container');
-  if(!selectedSheets.length&&!sources.length&&!WB&&!extra){alert('Please add some information or drop a file first.');return}
+  if(!selectedSheets.length&&!sources.length&&!WB&&!extra){alert('Please drop a file or add some information first.');return}
 
-  let p='You are writing a step-by-step user guide for DATA ANALYSTS on how to update and complete quality checks in an Excel workbook.\n\n';
-  p+='Below is the full structure and content extracted directly from the workbook. Use this to write specific, accurate instructions.\n\n';
-  p+='=== WORKBOOK STRUCTURE ===\n\n';
+  // Detect check sheets for screenshot labels
+  const checkSheetNames=(WB&&WB.checkSheets||[]).map(s=>s.name);
+  const summarySheet=WB&&WB.sheetData.find(s=>s.role==='Summary');
 
-  if(selectedSheets.length){p+='SHEETS INCLUDED:\n';selectedSheets.forEach(s=>p+='  - '+s+'\n');p+='\n'}
+  // --- METADATA BLOCK ---
+  let p='';
+  p+='## WORKBOOK METADATA\n\n';
+  if(WB){
+    const roles=WB.sheetData.filter(s=>s.role).map(s=>s.name+' ('+s.role+')').join(', ');
+    if(roles)p+='Identified sheet roles: '+roles+'\n';
+    if(checkSheetNames.length)p+='Validation check sheets: '+checkSheetNames.join(', ')+'\n';
+    if(summarySheet)p+='Summary / sign-off sheet: '+summarySheet.name+'\n';
+  }
+  p+='\n';
 
+  // --- STRUCTURE BLOCK ---
+  p+='## WORKBOOK STRUCTURE\n\n';
+  if(selectedSheets.length){p+='Sheets included: '+selectedSheets.join(', ')+'\n\n'}
   if(WB&&WB.sheetData.length){
-    p+='SHEET CONTENTS:\n\n';
     WB.sheetData.forEach(sheet=>{
       if(!selectedSheets.includes(sheet.name)||!sheet.headers.length)return;
-      p+='Sheet: "'+sheet.name+'"\n';
+      p+='Sheet "'+sheet.name+'"'+(sheet.role?' ['+sheet.role+']':'')+'\n';
       p+='  Columns: '+sheet.headers.join(' | ')+'\n';
-      if(sheet.records.length){
-        p+='  Sample rows (first '+Math.min(5,sheet.records.length)+' of '+sheet.records.length+'):\n';
+      if(sheet.checkInfo&&sheet.checkInfo.checkRows&&sheet.checkInfo.checkRows.length){
+        p+='  Check rows detected: '+sheet.checkInfo.checkRows.slice(0,20).join(', ')+'\n';
+      }
+      if(sheet.records&&sheet.records.length){
+        p+='  Sample data ('+Math.min(5,sheet.records.length)+' of '+sheet.records.length+' rows):\n';
         sheet.records.slice(0,5).forEach((row,i)=>{
-          p+='    Row '+(i+1)+': '+sheet.headers.map((h,j)=>h+': '+(row[j]||'(blank)')).join('  |  ')+'\n';
+          p+='    '+sheet.headers.map((h,j)=>h+': '+(row[j]||'(blank)')).join(' | ')+'\n';
         });
       }
       p+='\n';
     });
   }
-
   if(WB&&WB.tables.length){
-    p+='NAMED TABLES:\n';
-    WB.tables.forEach(t=>{p+='  - Table "'+t.name+'"';if(t.cols.length)p+=' with columns: '+t.cols.join(', ');p+='\n'});
+    p+='Named tables:\n';
+    WB.tables.forEach(t=>{p+='  - "'+t.name+'"'+(t.cols.length?' columns: '+t.cols.join(', '):'')+'\n'});
     p+='\n';
   }
+  if(namedRanges.length){p+='Named ranges:\n';namedRanges.forEach(n=>p+='  - '+n+'\n');p+='\n'}
+  if(sources.length){p+='External data sources:\n';sources.forEach((s,i)=>p+='  '+(i+1)+'. '+s+'\n');p+='\n'}
+  if(extra){p+='Additional context:\n'+extra+'\n\n'}
 
-  if(namedRanges.length){p+='NAMED RANGES:\n';namedRanges.forEach(n=>p+='  - '+n+'\n');p+='\n'}
+  // --- INSTRUCTIONS BLOCK ---
+  const docInstructions={
+    guide:`## DOCUMENT TO PRODUCE
 
-  if(sources.length){p+='EXTERNAL DATA SOURCES AND CONNECTIONS:\n';sources.forEach((s,i)=>p+='  '+(i+1)+'. '+s+'\n');p+='\n'}
+Write a step-by-step USER GUIDE for DATA ANALYSTS who regularly run this DQA process.
 
-  if(extra){p+='ADDITIONAL CONTEXT:\n'+extra+'\n\n'}
+Structure it in exactly these four sections using the workbook structure above:
 
-  p+='=== GUIDE REQUIREMENTS ===\n\n';
-  p+='Write the guide in these four sections. Use the exact sheet names, column names, table names, and connection names from the workbook structure above. Reference actual column and sheet names in every step.\n\n';
-  p+='1. UPDATING DATA LINKS\nHow to refresh all external links. For each link: which sheet or table it feeds, how to trigger the refresh, what a successful update looks like, what a failed or stale link looks like, and what to do.\n\n';
-  p+='2. REFRESHING EXTERNAL DATA SOURCES\nFor each source and connection above: how to trigger the refresh, how to confirm the correct data has loaded (use the column names and row counts from the sheet content above), and what to check if data looks wrong.\n\n';
-  p+='3. DATA QUALITY CHECKS\nFor each check in the workbook (use the check rows from the sheet content above): what it tests, what the expected value is, what a pass looks like (cell colour, value, flag), how to mark it as signed off, and what to do if it fails.\n\n';
-  p+='4. FINAL REVIEW BEFORE SIGN-OFF\nHow to confirm every check is marked, no blanks remain in key columns, named ranges show expected values, and the workbook is ready. Reference the specific sign-off cell or field from the workbook structure above if present.\n\n';
-  p+='Number every step. After each step leave a blank line with the text: [Screenshot]\nDo not explain basic Excel actions. No introduction or closing summary. Start immediately with Section 1.';
+### 1. Updating Data Links
+For each external link in this workbook: which sheet it feeds, how to trigger the refresh, what a successful update looks like, and what to do if a link is stale or fails.
+
+### 2. Refreshing External Data Sources
+For each source and connection listed above: how to trigger the refresh, how to confirm the correct data has loaded (reference the specific column names and expected row counts from the sheet content above), and what to check if something looks wrong.
+
+### 3. Data Quality Checks
+For each check row found in the check sheets above: what it is testing, what the expected value is, what a pass looks like, how to mark it as signed off, and what to do if it fails. Reference the exact column names from the check sheet.
+
+### 4. Final Review and Sign-Off
+How to confirm all checks are marked, no key columns have blanks, named ranges show expected values, and the workbook is ready. Reference the specific sign-off cell or sheet identified above.
+
+Number every step. Use the exact sheet names, column names, and table names from the workbook structure above. After each step, insert a specific screenshot placeholder using the format:
+[Screenshot: <what to capture>]
+
+Do not explain basic Excel actions. No introduction, preamble, or closing summary. Start with Section 1.`,
+
+    sop:`## DOCUMENT TO PRODUCE
+
+Write a formal STANDARD OPERATING PROCEDURE (SOP) for this DQA workbook process.
+
+Include:
+- Purpose and scope (one paragraph, inferred from the workbook structure above)
+- Roles and responsibilities (who runs this process, who signs off)
+- Frequency (leave a placeholder if unknown)
+- Pre-requisites (access, data sources ready, links enabled)
+- Procedure steps structured as:
+  1. Updating data links
+  2. Refreshing external sources
+  3. Completing data quality checks
+  4. Review and sign-off
+
+Use the exact sheet names, column names, and check names from the workbook structure above. After each step insert: [Screenshot: <what to capture>]
+
+Write in formal procedural language. Number every step within each section.`,
+
+    quickref:`## DOCUMENT TO PRODUCE
+
+Write a ONE-PAGE QUICK REFERENCE CHECKLIST for an experienced analyst running this DQA process.
+
+Format as a checklist with checkbox items grouped in four sections:
+- [ ] Data links updated
+- [ ] External sources refreshed
+- [ ] Each DQA check completed and signed off
+- [ ] Final review done and workbook signed off
+
+Use the actual check names from the check sheets above. Keep each item to one line. Include the specific sheet name and column to look at for each check. No explanations, no screenshots needed.`,
+
+    training:`## DOCUMENT TO PRODUCE
+
+Write a TRAINING GUIDE for someone new to this workbook who has never run this DQA process before.
+
+Structure it as:
+1. Overview of the workbook (what it is for, how it is structured, what each sheet does — use the sheet roles detected above)
+2. Before you start (what access you need, what sources must be ready)
+3. Step-by-step walkthrough of the full process:
+   - Updating data links
+   - Refreshing external data sources
+   - Working through each check
+   - Final review and sign-off
+4. Common issues and how to fix them
+
+Use plain language. Explain why each step matters, not just what to do. Reference the actual sheet names, column names, and check names from the workbook structure above. After each step insert: [Screenshot: <what to capture>]`
+  };
+
+  p+=docInstructions[selectedDocType]||docInstructions.guide;
 
   document.getElementById('pb').textContent=p;
   const oa=document.getElementById('oa');oa.classList.add('on');
-  document.getElementById('prompt-warn').classList.add('on');
   oa.scrollIntoView({behavior:'smooth',block:'start'});
   const cb=document.getElementById('cb');cb.classList.remove('done');
   cb.innerHTML='<svg class="ic" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
